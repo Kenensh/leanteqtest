@@ -224,9 +224,22 @@
       border-color: #ef4444;
     }
     
-    .btn-danger:hover {
-      background-color: #dc2626;
-      border-color: #dc2626;
+    /* 模态框样式 */
+    .modal-content {
+      background-color: var(--secondary-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-header, .modal-footer {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-title {
+      color: var(--text-primary);
+    }
+    
+    .btn-close-white {
+      filter: invert(1) grayscale(100%) brightness(200%);
     }
     
     /* 員工卡片樣式 */
@@ -410,52 +423,14 @@
         <div class="main-content">
           <h1 class="page-title">UserManage</h1>
           
-          <!-- Employee Management Area -->
-          <div class="content-wrapper mb-4">
-            <div class="mb-3">
-              <label class="text-white d-block mb-2">employee name</label>
-              <input type="text" class="form-control bg-dark text-white w-100" placeholder="輸入員工名稱" id="employeeName">
-            </div>
-            
-            <div class="employee-role-list">
-              <div class="employee-role-row">
-                <div class="role-label">role 1</div>
-                <div class="role-input">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
-                </div>
-                <div class="role-actions">
-                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-              </div>
-              
-              <div class="employee-role-row">
-                <div class="role-label">role 2</div>
-                <div class="role-input">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
-                </div>
-                <div class="role-actions">
-                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
-              </div>
-              
-              <div class="employee-role-row">
-                <div class="role-label">role 3</div>
-                <div class="role-input">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
-                </div>
-                <div class="role-actions d-flex">
-                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
-                  <button class="btn btn-info btn-sm role-add-btn ms-1"><i class="fas fa-plus"></i></button>
-                </div>
-              </div>
-            </div>
-            
-            <div class="text-center mt-4">
-              <button class="btn btn-info" id="addEmployeeBtn">
-                <i class="fas fa-plus me-1"></i> 新增員工
-              </button>
-            </div>
+          <!-- 页面中间的"+ 新增员工"按钮，保留并添加模态框触发功能 -->
+          <div class="text-center mb-4">
+            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#employeeModal">
+              <i class="fas fa-plus me-1"></i> 新增員工
+            </button>
           </div>
+          
+          <!-- 移除整个员工角色输入区域 -->
           
           <!-- First Row -->
           <div class="row">
@@ -545,7 +520,63 @@
                     </div>
                   </div>
                   
-
+                  <!-- 移除员工管理区域内底部的"+ 新增员工"按钮 -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Modal for adding employee -->
+            <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="employeeModalLabel">新增員工</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Employee input form -->
+                    <div class="mb-3">
+                      <label class="text-white d-block mb-2">employee name</label>
+                      <input type="text" class="form-control bg-dark text-white w-100" placeholder="輸入員工名稱" id="modalEmployeeName">
+                    </div>
+                    
+                    <div class="employee-role-list" id="modalRoleList">
+                      <div class="employee-role-row">
+                        <div class="role-label">role 1</div>
+                        <div class="role-input">
+                          <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
+                        </div>
+                        <div class="role-actions">
+                          <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                      </div>
+                      
+                      <div class="employee-role-row">
+                        <div class="role-label">role 2</div>
+                        <div class="role-input">
+                          <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
+                        </div>
+                        <div class="role-actions">
+                          <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                      </div>
+                      
+                      <div class="employee-role-row">
+                        <div class="role-label">role 3</div>
+                        <div class="role-input">
+                          <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
+                        </div>
+                        <div class="role-actions d-flex">
+                          <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
+                          <button class="btn btn-info btn-sm role-add-btn ms-1"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" id="modalAddEmployeeBtn">新增</button>
+                  </div>
                 </div>
               </div>
             </div>
