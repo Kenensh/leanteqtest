@@ -182,6 +182,97 @@
       gap: 12px;
     }
     
+    .employee-role-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .employee-role-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .role-label {
+      width: 80px;
+      color: var(--text-primary);
+    }
+    
+    .role-input {
+      flex: 1;
+    }
+    
+    .role-actions {
+      width: auto;
+      display: flex;
+      gap: 5px;
+    }
+    
+    .btn-info {
+      background-color: #38bdf8;
+      border-color: #38bdf8;
+    }
+    
+    .btn-info:hover {
+      background-color: #0ea5e9;
+      border-color: #0ea5e9;
+    }
+    
+    .btn-danger {
+      background-color: #ef4444;
+      border-color: #ef4444;
+    }
+    
+    .btn-danger:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+    }
+    
+    /* 員工卡片樣式 */
+    .employee-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .employee-card {
+      background-color: #0f172a;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .employee-card-name {
+      font-size: 16px;
+      padding: 12px 15px;
+      color: white;
+      font-weight: 500;
+    }
+    
+    .employee-card-stations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 15px 15px;
+    }
+    
+    .station-badge {
+      display: inline-flex;
+      align-items: center;
+      background-color: rgba(239, 68, 68, 0.2);
+      color: white;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    
+    .station-badge i {
+      color: #ff4f7e;
+      margin-right: 5px;
+      font-size: 11px;
+    }
+    
+    /* 員工列表樣式 */
     .employee-list {
       display: flex;
       flex-direction: column;
@@ -213,14 +304,14 @@
       gap: 16px;
     }
     
-    .employee-stations-item {
-      padding: 10px;
+    .employee-info-item {
+      padding: 12px;
       background-color: #0f172a;
       border-radius: 6px;
       transition: background-color 0.2s;
     }
     
-    .employee-stations-item:hover {
+    .employee-info-item:hover {
       background-color: #1a2437;
     }
     
@@ -241,7 +332,7 @@
       font-size: 12px;
       color: var(--text-primary);
       background-color: rgba(255, 79, 126, 0.2);
-      padding: 2px 8px;
+      padding: 4px 10px;
       border-radius: 4px;
       display: inline-flex;
       align-items: center;
@@ -250,6 +341,7 @@
     .station-tag i {
       color: #ff4f7e;
       font-size: 10px;
+      margin-right: 4px;
     }
   </style>
 </head>
@@ -318,70 +410,48 @@
         <div class="main-content">
           <h1 class="page-title">UserManage</h1>
           
-          <!-- Notice Box -->
+          <!-- Employee Management Area -->
           <div class="content-wrapper mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-white">To do list 的形式</span>
+            <div class="mb-3">
+              <label class="text-white d-block mb-2">employee name</label>
+              <input type="text" class="form-control bg-dark text-white w-100" placeholder="輸入員工名稱" id="employeeName">
             </div>
             
-            <div class="employee-list">
-              <div class="employee-row">
-                <div class="employee-name">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="徐健恩">
+            <div class="employee-role-list">
+              <div class="employee-role-row">
+                <div class="role-label">role 1</div>
+                <div class="role-input">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
                 </div>
-                <div class="employee-station">
-                  <select class="form-select bg-dark text-white">
-                    <option>B3 2F MDP Line</option>
-                    <option>B3 2F BB Room</option>
-                    <option>B3 2F QC Room</option>
-                    <option>B3 2F Lab</option>
-                    <option>B1 1.5F WH</option>
-                  </select>
-                </div>
-                <div class="employee-actions">
-                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                <div class="role-actions">
+                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
                 </div>
               </div>
               
-              <div class="employee-row">
-                <div class="employee-name">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="Dick Chen">
+              <div class="employee-role-row">
+                <div class="role-label">role 2</div>
+                <div class="role-input">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
                 </div>
-                <div class="employee-station">
-                  <select class="form-select bg-dark text-white">
-                    <option>B3 2F MDP Line</option>
-                    <option selected>B3 2F BB Room</option>
-                    <option>B3 2F QC Room</option>
-                    <option>B3 2F Lab</option>
-                    <option>B1 1.5F WH</option>
-                  </select>
-                </div>
-                <div class="employee-actions">
-                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                <div class="role-actions">
+                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
                 </div>
               </div>
               
-              <div class="employee-row">
-                <div class="employee-name">
-                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="林美玲">
+              <div class="employee-role-row">
+                <div class="role-label">role 3</div>
+                <div class="role-input">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
                 </div>
-                <div class="employee-station">
-                  <select class="form-select bg-dark text-white">
-                    <option>B3 2F MDP Line</option>
-                    <option>B3 2F BB Room</option>
-                    <option selected>B3 2F QC Room</option>
-                    <option>B3 2F Lab</option>
-                    <option>B1 1.5F WH</option>
-                  </select>
-                </div>
-                <div class="employee-actions">
-                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                <div class="role-actions d-flex">
+                  <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
+                  <button class="btn btn-info btn-sm role-add-btn ms-1"><i class="fas fa-plus"></i></button>
                 </div>
               </div>
             </div>
             
-            <div class="mt-3 text-center">
-              <button class="btn btn-primary" id="addEmployeeBtn">
+            <div class="text-center mt-4">
+              <button class="btn btn-info" id="addEmployeeBtn">
                 <i class="fas fa-plus me-1"></i> 新增員工
               </button>
             </div>
@@ -442,38 +512,40 @@
               </div>
             </div>
             
-            <!-- Location Information Section -->
+            <!-- Employee Management Section -->
             <div class="col-md-4 mb-4">
               <div class="info-box">
                 <h3 class="info-title">員工管理</h3>
                 
-                <div class="employee-stations-list">
-                  <div class="employee-stations-item">
-                    <div class="employee-name">徐健恩</div>
-                    <div class="stations-tag-list">
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                <div class="employee-info-container">
+                  <div class="employee-card">
+                    <div class="employee-card-name">徐健恩</div>
+                    <div class="employee-card-stations">
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
                     </div>
                   </div>
                   
-                  <div class="employee-stations-item">
-                    <div class="employee-name">Dick Chen</div>
-                    <div class="stations-tag-list">
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                  <div class="employee-card">
+                    <div class="employee-card-name">Dick Chen</div>
+                    <div class="employee-card-stations">
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
                     </div>
                   </div>
                   
-                  <div class="employee-stations-item">
-                    <div class="employee-name">林美玲</div>
-                    <div class="stations-tag-list">
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
-                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                  <div class="employee-card">
+                    <div class="employee-card-name">林美玲</div>
+                    <div class="employee-card-stations">
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
+                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
                     </div>
                   </div>
+                  
+
                 </div>
               </div>
             </div>
@@ -484,6 +556,22 @@
                 <h3 class="info-title">修改密碼，同時包含驗證鈕</h3>
                 
                 <form id="passwordForm">
+                  <div class="mb-3">
+                    <label for="employeeSelect" class="form-label">選擇員工</label>
+                    <select class="form-select bg-dark text-white" id="employeeSelect">
+                      <option value="">選擇員工...</option>
+                      <option value="1">徐健恩</option>
+                      <option value="2">Dick Chen</option>
+                      <option value="3">林美玲</option>
+                      <option value="4">陳俊宏</option>
+                      <option value="5">王建國</option>
+                      <option value="6">李嘉明</option>
+                      <option value="7">張靜怡</option>
+                      <option value="8">吳建志</option>
+                      <option value="9">黃麗華</option>
+                      <option value="10">蔡依婷</option>
+                    </select>
+                  </div>
                   <div class="mb-3">
                     <label for="currentPassword" class="form-label">當前密碼</label>
                     <input type="password" class="form-control bg-dark text-white" id="currentPassword">
@@ -523,73 +611,141 @@
   <!-- JavaScript 集合 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // ===== 員工管理相關功能 =====
-      // 獲取員工列表容器
-      const employeeList = document.querySelector('.employee-list');
+      // ===== 員工角色管理功能 =====
+      const roleList = document.querySelector('.employee-role-list');
       
-      // 初始化加號按鈕的事件處理
-      initAddButtons();
-      
-      // 新增員工按鈕
-      const addEmployeeBtn = document.getElementById('addEmployeeBtn');
-      addEmployeeBtn.addEventListener('click', function() {
-        // 這裡可以添加表單提交代碼
-        alert('員工資料已保存！');
+      // 為所有角色刪除按鈕添加事件
+      document.querySelectorAll('.role-delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          // 獲取按鈕所在的行
+          const row = this.closest('.employee-role-row');
+          
+          // 檢查列表中的行數量，確保至少保留一行
+          if (document.querySelectorAll('.employee-role-row').length > 1) {
+            row.remove();
+            updateRoleLabels(); // 更新標籤序號
+          } else {
+            alert('至少需要一個角色！');
+          }
+        });
       });
       
-      // 初始化所有加號按鈕的事件
-      function initAddButtons() {
-        const addButtons = document.querySelectorAll('.employee-actions .btn');
-        
-        addButtons.forEach(button => {
-          // 避免重複添加事件
-          button.removeEventListener('click', addNewRow);
-          button.addEventListener('click', addNewRow);
-        });
-      }
+      // 為角色添加按鈕添加事件
+      document.querySelector('.role-add-btn').addEventListener('click', addNewRoleRow);
       
-      // 添加新行的函數
-      function addNewRow(event) {
-        // 獲取當前員工行數
-        const currentRows = document.querySelectorAll('.employee-row').length;
+      // 添加新角色行的函數
+      function addNewRoleRow() {
+        // 獲取當前行數
+        const rows = document.querySelectorAll('.employee-role-row');
+        const newIndex = rows.length + 1;
         
-        // 檢查是否達到最大限制
-        if (currentRows >= 10) {
-          alert('最多只能添加10位員工！');
-          return;
+        // 先移除當前最後一行的加號按鈕
+        const lastRow = rows[rows.length - 1];
+        const addBtn = lastRow.querySelector('.role-add-btn');
+        if (addBtn) {
+          addBtn.remove();
         }
         
         // 創建新行
         const newRow = document.createElement('div');
-        newRow.className = 'employee-row';
+        newRow.className = 'employee-role-row';
         newRow.innerHTML = `
-          <div class="employee-name">
-            <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名">
+          <div class="role-label">role ${newIndex}</div>
+          <div class="role-input">
+            <input type="text" class="form-control bg-dark text-white" placeholder="輸入角色資訊">
           </div>
-          <div class="employee-station">
-            <select class="form-select bg-dark text-white">
-              <option>B3 2F MDP Line</option>
-              <option>B3 2F BB Room</option>
-              <option>B3 2F QC Room</option>
-              <option>B3 2F Lab</option>
-              <option>B1 1.5F WH</option>
-            </select>
-          </div>
-          <div class="employee-actions">
-            <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+          <div class="role-actions d-flex">
+            <button class="btn btn-danger btn-sm role-delete-btn"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-info btn-sm role-add-btn ms-1"><i class="fas fa-plus"></i></button>
           </div>
         `;
         
-        // 將新行添加到列表中
-        employeeList.appendChild(newRow);
+        // 將新行添加到列表
+        roleList.appendChild(newRow);
         
-        // 為新加的行中的按鈕添加事件
-        initAddButtons();
+        // 為新行中的刪除按鈕添加事件
+        newRow.querySelector('.role-delete-btn').addEventListener('click', function() {
+          if (document.querySelectorAll('.employee-role-row').length > 1) {
+            // 如果刪除的是最後一行，且還有其他行存在
+            if (newRow === document.querySelector('.employee-role-list').lastElementChild) {
+              // 把加號按鈕加到新的最後一行
+              const newLastRow = document.querySelectorAll('.employee-role-row')[document.querySelectorAll('.employee-role-row').length - 2];
+              if (!newLastRow.querySelector('.role-add-btn')) {
+                const actionsDiv = newLastRow.querySelector('.role-actions');
+                const newAddBtn = document.createElement('button');
+                newAddBtn.className = 'btn btn-info btn-sm role-add-btn ms-1';
+                newAddBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                newAddBtn.addEventListener('click', addNewRoleRow);
+                actionsDiv.appendChild(newAddBtn);
+              }
+            }
+            
+            newRow.remove();
+            updateRoleLabels();
+          } else {
+            alert('至少需要一個角色！');
+          }
+        });
+        
+        // 為新行中的添加按鈕添加事件
+        newRow.querySelector('.role-add-btn').addEventListener('click', addNewRoleRow);
       }
+      
+      // 更新角色標籤序號
+      function updateRoleLabels() {
+        const rows = document.querySelectorAll('.employee-role-row');
+        rows.forEach((row, index) => {
+          row.querySelector('.role-label').textContent = `role ${index + 1}`;
+        });
+      }
+      
+      // 新增員工按鈕
+      const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+      addEmployeeBtn.addEventListener('click', function() {
+        // 獲取員工名稱
+        const employeeName = document.querySelector('.employee-name-input').value.trim();
+        
+        if (!employeeName) {
+          alert('請輸入員工名稱！');
+          return;
+        }
+        
+        // 獲取所有角色值
+        const roles = [];
+        document.querySelectorAll('.employee-role-row .role-input input').forEach(input => {
+          if (input.value.trim()) {
+            roles.push(input.value.trim());
+          }
+        });
+        
+        if (roles.length === 0) {
+          alert('請至少輸入一個角色！');
+          return;
+        }
+        
+        // 這裡可以添加將數據提交到後端的代碼
+        alert(`已新增員工：${employeeName}，角色：${roles.join(', ')}`);
+        
+        // 清空輸入框
+        document.querySelector('.employee-name-input').value = '';
+        document.querySelectorAll('.employee-role-row .role-input input').forEach(input => {
+          input.value = '';
+        });
+      });
+      
+      // ===== 員工管理區域功能 =====
+      // 為員工管理區域中的加號按鈕添加事件
+      document.querySelectorAll('.employee-info-row .btn-info').forEach(button => {
+        button.addEventListener('click', function() {
+          const employeeName = this.closest('.employee-info-row').querySelector('.employee-name-col input').value;
+          alert(`您點擊了 ${employeeName} 的添加按鈕`);
+        });
+      });
 
       // ===== 密碼修改相關功能 =====
       // 密碼修改表單相關
       const passwordForm = document.getElementById('passwordForm');
+      const employeeSelect = document.getElementById('employeeSelect');
       const currentPassword = document.getElementById('currentPassword');
       const newPassword = document.getElementById('newPassword');
       const confirmPassword = document.getElementById('confirmPassword');
@@ -608,6 +764,13 @@
         
         // 進行驗證
         let isValid = true;
+        
+        // 驗證是否選擇了員工
+        if (!employeeSelect.value) {
+          alert('請選擇要修改密碼的員工');
+          employeeSelect.focus();
+          return;
+        }
         
         // 驗證當前密碼不為空
         if (!currentPassword.value.trim()) {
@@ -630,14 +793,19 @@
         
         // 如果驗證通過，顯示成功訊息
         if (isValid) {
+          // 獲取選擇的員工名稱
+          const selectedEmployeeName = employeeSelect.options[employeeSelect.selectedIndex].text;
+          
           // 這裡可以添加實際的密碼修改請求
           
           // 清空所有輸入框
+          employeeSelect.value = '';
           currentPassword.value = '';
           newPassword.value = '';
           confirmPassword.value = '';
           
           // 顯示成功訊息
+          successMessage.textContent = `${selectedEmployeeName} 的密碼已成功修改！`;
           successMessage.classList.remove('d-none');
           
           // 3秒後隱藏成功訊息
