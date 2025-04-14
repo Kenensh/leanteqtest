@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Runcard - User Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-bg: #0f172a;
+      --secondary-bg: #1e293b;
+      --accent-color: #5ce0d8;
+      --text-primary: #ffffff;
+      --text-secondary: #8899ac;
+      --card-bg: #101726;
+      --border-radius: 10px;
+    }
+    
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .sidebar {
+      background-color: rgba(15, 23, 42, 0.8);
+      min-height: 100vh;
+      padding: 0;
+    }
+    
+    .sidebar-header {
+      padding: 20px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-brand {
+      color: var(--accent-color);
+      font-size: 24px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    .nav-link {
+      color: var(--text-secondary);
+      padding: 12px 20px;
+      margin: 4px 0;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--secondary-bg);
+      color: var(--text-primary);
+    }
+    
+    .nav-link.active {
+      border-left: 3px solid var(--accent-color);
+    }
+    
+    .main-content {
+      padding: 20px;
+    }
+    
+    .page-title {
+      color: var(--text-primary);
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    
+    .content-wrapper {
+      background-color: rgba(30, 41, 59, 0.4);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .info-box {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: var(--secondary-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      height: 100%;
+    }
+    
+    .info-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header-nav {
+      background-color: rgba(15, 23, 42, 0.8);
+      padding: 10px 20px;
+    }
+    
+    .language-switch, .user-dropdown {
+      background-color: rgba(30, 41, 59, 0.6);
+      border-radius: 20px;
+      padding: 5px 15px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+    
+    .language-switch:hover, .user-dropdown:hover {
+      background-color: rgba(92, 224, 216, 0.2);
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: #0f172a;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #4ac8c0;
+      border-color: #4ac8c0;
+      color: #0f172a;
+    }
+    
+    .user-type {
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+    }
+    
+    .password-reset {
+      margin-top: 15px;
+    }
+    
+    .cardnewcolor{
+      color:#3b82f6;
+    }
+    
+    /* 身份列表樣式 */
+    .identity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .identity-item {
+      display: flex;
+      align-items: center;
+      padding: 4px 0;
+    }
+    
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .dot-1 { background-color: #ff5252; }  /* 紅色 */
+    .dot-2 { background-color: #ff4f7e; }  /* 粉紅色 */
+    .dot-3 { background-color: #4ade80; }  /* 綠色 */
+    .dot-4 { background-color: #38bdf8; }  /* 藍色 */
+    .dot-5 { background-color: #a78bfa; }  /* 紫色 */
+    .dot-6 { background-color: #facc15; }  /* 黃色 */
+    .dot-7 { background-color: #f97316; }  /* 橙色 */
+    .dot-8 { background-color: #10b981; }  /* 綠松色 */
+    .dot-9 { background-color: #6366f1; }  /* 靛藍色 */
+    .dot-10 { background-color: #ec4899; } /* 品紅色 */
+    
+    .identity-name {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    /* 站點列表樣式 */
+    .station-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .employee-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .employee-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .employee-name {
+      flex: 2;
+    }
+    
+    .employee-station {
+      flex: 3;
+    }
+    
+    .employee-actions {
+      flex: 0 0 40px;
+    }
+    
+    /* 員工站點樣式 */
+    .employee-stations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .employee-stations-item {
+      padding: 10px;
+      background-color: #0f172a;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    
+    .employee-stations-item:hover {
+      background-color: #1a2437;
+    }
+    
+    .employee-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    
+    .stations-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .station-tag {
+      font-size: 12px;
+      color: var(--text-primary);
+      background-color: rgba(255, 79, 126, 0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .station-tag i {
+      color: #ff4f7e;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 sidebar">
+        <div class="sidebar-header">
+          <a href="#" class="sidebar-brand">
+            <img src="/api/placeholder/24/24" alt="Logo" class="me-2">
+            E-Runcard
+          </a>
+        </div>
+        <div class="mt-4">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-list me-2"></i> Runcards List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-building me-2"></i> WorkStation
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-tasks me-2"></i> Process Card
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-exclamation-triangle me-2"></i> DMR List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="fas fa-users me-2"></i> Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-plus-circle me-2"></i> add Demo
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="col-md-10">
+        <!-- Top Navigation -->
+        <div class="d-flex justify-content-end header-nav">
+          <div class="d-flex align-items-center">
+            <div class="language-switch me-3">
+              <i class="fas fa-globe me-1"></i> EN
+            </div>
+            <div class="user-dropdown">
+              <i class="fas fa-user me-1"></i> 林丹宜 <span class="badge bg-success ms-1">2</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <h1 class="page-title">UserManage</h1>
+          
+          <!-- Notice Box -->
+          <div class="content-wrapper mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-white">To do list 的形式</span>
+            </div>
+            
+            <div class="employee-list">
+              <div class="employee-row">
+                <div class="employee-name">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="徐健恩">
+                </div>
+                <div class="employee-station">
+                  <select class="form-select bg-dark text-white">
+                    <option>B3 2F MDP Line</option>
+                    <option>B3 2F BB Room</option>
+                    <option>B3 2F QC Room</option>
+                    <option>B3 2F Lab</option>
+                    <option>B1 1.5F WH</option>
+                  </select>
+                </div>
+                <div class="employee-actions">
+                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+              
+              <div class="employee-row">
+                <div class="employee-name">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="Dick Chen">
+                </div>
+                <div class="employee-station">
+                  <select class="form-select bg-dark text-white">
+                    <option>B3 2F MDP Line</option>
+                    <option selected>B3 2F BB Room</option>
+                    <option>B3 2F QC Room</option>
+                    <option>B3 2F Lab</option>
+                    <option>B1 1.5F WH</option>
+                  </select>
+                </div>
+                <div class="employee-actions">
+                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+              
+              <div class="employee-row">
+                <div class="employee-name">
+                  <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名" value="林美玲">
+                </div>
+                <div class="employee-station">
+                  <select class="form-select bg-dark text-white">
+                    <option>B3 2F MDP Line</option>
+                    <option>B3 2F BB Room</option>
+                    <option selected>B3 2F QC Room</option>
+                    <option>B3 2F Lab</option>
+                    <option>B1 1.5F WH</option>
+                  </select>
+                </div>
+                <div class="employee-actions">
+                  <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-3 text-center">
+              <button class="btn btn-primary" id="addEmployeeBtn">
+                <i class="fas fa-plus me-1"></i> 新增員工
+              </button>
+            </div>
+          </div>
+          
+          <!-- First Row -->
+          <div class="row">
+            <!-- User Identity Section -->
+            <div class="col-md-4 mb-4">
+              <div class="info-box">
+                <h3 class="info-title">使用者身分 <small>(往下列表)</small></h3>
+                
+                <div class="user-roles">
+                  <p class="mb-3">登入這個網站的使用者同時有多個身分：</p>
+                  <div class="identity-list">
+                    <div class="identity-item">
+                      <span class="dot dot-1"></span>
+                      <span class="identity-name">系大導童軍主任</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-2"></span>
+                      <span class="identity-name">MOD</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-3"></span>
+                      <span class="identity-name">三結語Member</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-4"></span>
+                      <span class="identity-name">運勢專員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-5"></span>
+                      <span class="identity-name">資料人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-6"></span>
+                      <span class="identity-name">B1 倉儲人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-7"></span>
+                      <span class="identity-name">B3 查詢人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-8"></span>
+                      <span class="identity-name">品管主管</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-9"></span>
+                      <span class="identity-name">生產專員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-10"></span>
+                      <span class="identity-name">系統管理員</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Location Information Section -->
+            <div class="col-md-4 mb-4">
+              <div class="info-box">
+                <h3 class="info-title">員工管理</h3>
+                
+                <div class="employee-stations-list">
+                  <div class="employee-stations-item">
+                    <div class="employee-name">徐健恩</div>
+                    <div class="stations-tag-list">
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                    </div>
+                  </div>
+                  
+                  <div class="employee-stations-item">
+                    <div class="employee-name">Dick Chen</div>
+                    <div class="stations-tag-list">
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                    </div>
+                  </div>
+                  
+                  <div class="employee-stations-item">
+                    <div class="employee-name">林美玲</div>
+                    <div class="stations-tag-list">
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F MDP Line</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F BB Room</span>
+                      <span class="station-tag"><i class="fas fa-map-marker-alt me-1"></i>B3 2F QC Room</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Password Reset Section -->
+            <div class="col-md-4 mb-4">
+              <div class="info-box">
+                <h3 class="info-title">修改密碼，同時包含驗證鈕</h3>
+                
+                <form id="passwordForm">
+                  <div class="mb-3">
+                    <label for="currentPassword" class="form-label">當前密碼</label>
+                    <input type="password" class="form-control bg-dark text-white" id="currentPassword">
+                    <div class="invalid-feedback" id="currentPasswordFeedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="newPassword" class="form-label">新密碼</label>
+                    <input type="password" class="form-control bg-dark text-white" id="newPassword">
+                    <div class="invalid-feedback" id="newPasswordFeedback"></div>
+                    <small class="text-muted mt-1 d-block">密碼須至少8個字元，包含數字和大小寫字母</small>
+                  </div>
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">確認新密碼</label>
+                    <input type="password" class="form-control bg-dark text-white" id="confirmPassword">
+                    <div class="invalid-feedback" id="confirmPasswordFeedback"></div>
+                  </div>
+                  <button type="button" class="btn btn-primary" id="changePasswordBtn">
+                    <i class="fas fa-key me-1"></i> 修改密碼
+                  </button>
+                  <div class="alert alert-success mt-3 d-none" id="successMessage">
+                    密碼修改成功！
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- JavaScript 集合 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // ===== 員工管理相關功能 =====
+      // 獲取員工列表容器
+      const employeeList = document.querySelector('.employee-list');
+      
+      // 初始化加號按鈕的事件處理
+      initAddButtons();
+      
+      // 新增員工按鈕
+      const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+      addEmployeeBtn.addEventListener('click', function() {
+        // 這裡可以添加表單提交代碼
+        alert('員工資料已保存！');
+      });
+      
+      // 初始化所有加號按鈕的事件
+      function initAddButtons() {
+        const addButtons = document.querySelectorAll('.employee-actions .btn');
+        
+        addButtons.forEach(button => {
+          // 避免重複添加事件
+          button.removeEventListener('click', addNewRow);
+          button.addEventListener('click', addNewRow);
+        });
+      }
+      
+      // 添加新行的函數
+      function addNewRow(event) {
+        // 獲取當前員工行數
+        const currentRows = document.querySelectorAll('.employee-row').length;
+        
+        // 檢查是否達到最大限制
+        if (currentRows >= 10) {
+          alert('最多只能添加10位員工！');
+          return;
+        }
+        
+        // 創建新行
+        const newRow = document.createElement('div');
+        newRow.className = 'employee-row';
+        newRow.innerHTML = `
+          <div class="employee-name">
+            <input type="text" class="form-control bg-dark text-white" placeholder="員工姓名">
+          </div>
+          <div class="employee-station">
+            <select class="form-select bg-dark text-white">
+              <option>B3 2F MDP Line</option>
+              <option>B3 2F BB Room</option>
+              <option>B3 2F QC Room</option>
+              <option>B3 2F Lab</option>
+              <option>B1 1.5F WH</option>
+            </select>
+          </div>
+          <div class="employee-actions">
+            <button class="btn btn-info btn-sm"><i class="fas fa-plus"></i></button>
+          </div>
+        `;
+        
+        // 將新行添加到列表中
+        employeeList.appendChild(newRow);
+        
+        // 為新加的行中的按鈕添加事件
+        initAddButtons();
+      }
+
+      // ===== 密碼修改相關功能 =====
+      // 密碼修改表單相關
+      const passwordForm = document.getElementById('passwordForm');
+      const currentPassword = document.getElementById('currentPassword');
+      const newPassword = document.getElementById('newPassword');
+      const confirmPassword = document.getElementById('confirmPassword');
+      const changePasswordBtn = document.getElementById('changePasswordBtn');
+      const successMessage = document.getElementById('successMessage');
+      
+      // 錯誤提示元素
+      const currentPasswordFeedback = document.getElementById('currentPasswordFeedback');
+      const newPasswordFeedback = document.getElementById('newPasswordFeedback');
+      const confirmPasswordFeedback = document.getElementById('confirmPasswordFeedback');
+      
+      // 添加密碼修改按鈕事件
+      changePasswordBtn.addEventListener('click', function() {
+        // 重置表單狀態
+        resetFormStatus();
+        
+        // 進行驗證
+        let isValid = true;
+        
+        // 驗證當前密碼不為空
+        if (!currentPassword.value.trim()) {
+          showError(currentPassword, currentPasswordFeedback, '請輸入當前密碼');
+          isValid = false;
+        }
+        
+        // 驗證新密碼強度
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(newPassword.value)) {
+          showError(newPassword, newPasswordFeedback, '密碼須至少8個字元，包含數字和大小寫字母');
+          isValid = false;
+        }
+        
+        // 驗證兩次密碼是否一致
+        if (newPassword.value !== confirmPassword.value) {
+          showError(confirmPassword, confirmPasswordFeedback, '兩次輸入的密碼不一致');
+          isValid = false;
+        }
+        
+        // 如果驗證通過，顯示成功訊息
+        if (isValid) {
+          // 這裡可以添加實際的密碼修改請求
+          
+          // 清空所有輸入框
+          currentPassword.value = '';
+          newPassword.value = '';
+          confirmPassword.value = '';
+          
+          // 顯示成功訊息
+          successMessage.classList.remove('d-none');
+          
+          // 3秒後隱藏成功訊息
+          setTimeout(function() {
+            successMessage.classList.add('d-none');
+          }, 3000);
+        }
+      });
+      
+      // 顯示錯誤的函數
+      function showError(inputElement, feedbackElement, message) {
+        inputElement.classList.add('is-invalid');
+        feedbackElement.textContent = message;
+      }
+      
+      // 重置表單狀態
+      function resetFormStatus() {
+        // 隱藏成功訊息
+        successMessage.classList.add('d-none');
+        
+        // 重置所有輸入框的狀態
+        const inputs = [currentPassword, newPassword, confirmPassword];
+        const feedbacks = [currentPasswordFeedback, newPasswordFeedback, confirmPasswordFeedback];
+        
+        inputs.forEach(input => {
+          input.classList.remove('is-invalid');
+        });
+        
+        feedbacks.forEach(feedback => {
+          feedback.textContent = '';
+        });
+      }
+      
+      // 為輸入框添加事件，在輸入時重置錯誤狀態
+      [currentPassword, newPassword, confirmPassword].forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
