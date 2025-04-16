@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Runcard - 使用者管理</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-bg: #0d1321;
+      --secondary-bg: #1a2235;
+      --accent-color: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --card-bg: #101726;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s ease;
+    }
+    
+    /* Base Styles */
+    body {
+      background: linear-gradient(135deg, var(--primary-bg), #152238);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--primary-bg);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #2c3e50;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3e5472;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      background: linear-gradient(180deg, rgba(13, 19, 33, 0.95), rgba(21, 34, 56, 0.95));
+      backdrop-filter: blur(10px);
+      min-height: 100vh;
+      padding: 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    
+    .sidebar-header {
+      padding: 24px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-brand {
+      color: var(--accent-color);
+      font-size: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    .sidebar-brand:hover {
+      color: #5ce0d8;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link {
+      color: var(--text-secondary);
+      padding: 12px 20px;
+      margin: 6px 10px;
+      border-radius: 8px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-link:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover:before {
+      left: 100%;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--secondary-bg);
+      color: var(--text-primary);
+      transform: translateX(5px);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+      border-left: 3px solid var(--accent-color);
+      font-weight: 500;
+    }
+    
+    .nav-link i {
+      margin-right: 10px;
+      width: 18px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover i {
+      transform: scale(1.2);
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      padding: 30px;
+    }
+    
+    .page-title {
+      color: var(--text-primary);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(92, 224, 216, 0.3);
+      position: relative;
+    }
+    
+    .page-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+    
+    /* Card Styles */
+    .info-box {
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: linear-gradient(145deg, var(--secondary-bg), rgba(26, 34, 53, 0.8));
+      border-radius: var(--border-radius);
+      padding: 25px;
+      height: 100%;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(5px);
+    }
+    
+    .info-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .info-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      font-weight: 600;
+    }
+    
+    .info-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 40px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+    
+    /* Header Navigation */
+    .header-nav {
+      background: rgba(13, 19, 33, 0.8);
+      padding: 15px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    
+    .language-switch, .user-dropdown {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 24px;
+      padding: 8px 18px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .language-switch:hover, .user-dropdown:hover {
+      background: rgba(56, 189, 248, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .badge {
+      transition: var(--transition);
+    }
+    
+    .user-dropdown:hover .badge {
+      transform: scale(1.1);
+    }
+    
+    /* Button Styles */
+    .btn {
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-info {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(145deg, var(--danger-color), #b91c1c);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background: linear-gradient(145deg, #dc2626, #991b1b);
+      border-color: #dc2626;
+    }
+    
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .btn i {
+      margin-right: 5px;
+    }
+    
+    /* Station Card Styles */
+    .station-card {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px;
+    }
+    
+    .station-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .station-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .station-name {
+      font-weight: 500;
+      color: var(--accent-color);
+      font-size: 16px;
+      position: relative;
+      padding-left: 8px;
+    }
+    
+    .station-name:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+    }
+    
+    .station-details {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    
+    .badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: #f8fafc;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      margin-right: 5px;
+      transition: var(--transition);
+    }
+    
+    .badge:hover {
+      background: rgba(56, 189, 248, 0.25);
+      transform: translateY(-2px);
+    }
+    
+    /* Table styles */
+    .table {
+      color: var(--text-primary);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .table th {
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--accent-color);
+      font-weight: 500;
+      padding: 15px 10px;
+    }
+    
+    .table td {
+      border-color: rgba(255, 255, 255, 0.1);
+      vertical-align: middle;
+      padding: 15px 10px;
+    }
+    
+    .table tr {
+      transition: var(--transition);
+    }
+    
+    .table tr:hover {
+      background-color: rgba(30, 41, 59, 0.3);
+    }
+    
+    .badge-admin {
+      background-color: rgba(75, 192, 192, 0.2);
+      color: #4bc0c0;
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+    
+    .badge-user {
+      background-color: rgba(54, 162, 235, 0.2);
+      color: #36a2eb;
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+    
+    .badge-viewer {
+      background-color: rgba(153, 102, 255, 0.2);
+      color: #9966ff;
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+    
+    /* Modal Styles */
+    .modal-content {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-header, .modal-footer {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-title {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    .modal-backdrop {
+      backdrop-filter: blur(5px);
+    }
+    
+    /* Form Control Styles */
+    .form-control, .form-select {
+      background-color: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 10px 15px;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(15, 23, 42, 0.6);
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+    
+    /* Alert Styles */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 20px;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .alert-success {
+      background-color: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+    
+    .alert-danger {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+    
+    .alert-warning {
+      background-color: rgba(250, 204, 21, 0.2);
+      border-color: rgba(250, 204, 21, 0.3);
+      color: #fde047;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 sidebar">
+        <div class="sidebar-header">
+          <a href="#" class="sidebar-brand">
+            <img src="/api/placeholder/28/28" alt="Logo" class="me-2" style="filter: drop-shadow(0 0 5px rgba(92, 224, 216, 0.5));">
+            E-Runcard
+          </a>
+        </div>
+        <div class="mt-4">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-list"></i> Runcards List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-building"></i> WorkStation
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-tasks"></i> Process Card
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-exclamation-triangle"></i> DMR List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="fas fa-users"></i> Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-plus-circle"></i> add Demo
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="col-md-10">
+        <!-- Top Navigation -->
+        <div class="d-flex justify-content-between header-nav">
+          <h2 class="m-0 d-none d-md-block" style="color: var(--accent-color); font-weight: 600;">
+            <i class="fas fa-users me-2"></i> 使用者管理
+          </h2>
+          <div class="d-flex align-items-center">
+            <div class="language-switch me-3">
+              <i class="fas fa-globe me-1"></i> EN
+            </div>
+            <div class="user-dropdown">
+              <i class="fas fa-user-circle me-1"></i> 林丹宜 <span class="badge bg-success rounded-pill ms-1">2</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <h1 class="page-title">使用者管理</h1>
+          
+          <!-- Workstation Management Section -->
+          <div class="row mb-4">
+            <div class="col-12 fade-in" style="animation-delay: 0.1s;">
+              <div class="info-box">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="info-title m-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    站點管理
+                  </h3>
+                  <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createWorkstationModal">
+                    <i class="fas fa-plus me-1"></i> 創建新站點
+                  </button>
+                </div>
+                
+                <div class="row" id="workstationContainer">
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="1">
+                      <div class="station-card-header">
+                        <span class="station-name">B3 2F MDP Line</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">徐健恩</span>
+                          <span class="badge me-1">Dick Chen</span>
+                          <span class="badge">+3</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="2">
+                      <div class="station-card-header">
+                        <span class="station-name">B3 2F BB Room</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">徐健恩</span>
+                          <span class="badge me-1">Dick Chen</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="3">
+                      <div class="station-card-header">
+                        <span class="station-name">B3 2F QC Room</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">徐健恩</span>
+                          <span class="badge me-1">林美玲</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="4">
+                      <div class="station-card-header">
+                        <span class="station-name">B1 庫存區</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">林美玲</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="5">
+                      <div class="station-card-header">
+                        <span class="station-name">A區 組裝線</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">徐健恩</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="6">
+                      <div class="station-card-header">
+                        <span class="station-name">B區 組裝線</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">Dick Chen</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="7">
+                      <div class="station-card-header">
+                        <span class="station-name">品管測試站</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">徐健恩</span>
+                          <span class="badge me-1">林美玲</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-2">
+                    <div class="station-card" data-station-id="8">
+                      <div class="station-card-header">
+                        <span class="station-name">包裝車間</span>
+                        <div>
+                          <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-station-btn">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="station-details">
+                        <div class="mt-1">
+                          <span class="badge me-1">Dick Chen</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Account Management Section -->
+          <div class="row mb-4">
+            <div class="col-12 fade-in" style="animation-delay: 0.2s;">
+              <div class="info-box">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="info-title m-0">
+                    <i class="fas fa-user-cog me-2"></i>
+                    帳號管理
+                  </h3>
+                  <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+                    <i class="fas fa-plus me-1"></i> 創建新帳號
+                  </button>
+                </div>
+                
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">使用者名稱</th>
+                        <th scope="col">工號</th>
+                        <th scope="col">身份</th>
+                        <th scope="col">站點權限</th>
+                        <th scope="col">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>徐健恩</td>
+                        <td>EMP001</td>
+                        <td>
+                          <span class="badge badge-admin px-2 py-1">系統管理員</span>
+                        </td>
+                        <td>
+                          <span class="badge me-1">B3 2F MDP Line</span>
+                          <span class="badge me-1">B3 2F BB Room</span>
+                          <span class="badge">+1</span>
+                        </td>
+                        <td>
+                          <small class="d-block mb-1">建立日期: 2024-01-05</small>
+                          <small class="d-block mb-2">最後更新: 2024-03-22</small>
+                          <button class="btn btn-sm btn-info me-1 edit-account-btn" data-bs-toggle="modal" data-bs-target="#editAccountModal" data-user-id="1">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-account-btn" data-user-id="1">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>Dick Chen</td>
+                        <td>EMP002</td>
+                        <td>
+                          <span class="badge badge-user px-2 py-1">運勢專員</span>
+                        </td>
+                        <td>
+                          <span class="badge me-1">B3 2F MDP Line</span>
+                          <span class="badge me-1">B3 2F BB Room</span>
+                        </td>
+                        <td>
+                          <small class="d-block mb-1">建立日期: 2024-01-10</small>
+                          <small class="d-block mb-2">最後更新: 2024-03-15</small>
+                          <button class="btn btn-sm btn-info me-1 edit-account-btn" data-bs-toggle="modal" data-bs-target="#editAccountModal" data-user-id="2">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-account-btn" data-user-id="2">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>林美玲</td>
+                        <td>EMP003</td>
+                        <td>
+                          <span class="badge badge-viewer px-2 py-1">B3 查詢人員</span>
+                        </td>
+                        <td>
+                          <span class="badge me-1">B3 2F QC Room</span>
+                        </td>
+                        <td>
+                          <small class="d-block mb-1">建立日期: 2024-02-20</small>
+                          <small class="d-block mb-2">最後更新: 2024-03-01</small>
+                          <button class="btn btn-sm btn-info me-1 edit-account-btn" data-bs-toggle="modal" data-bs-target="#editAccountModal" data-user-id="3">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger delete-account-btn" data-user-id="3">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 創建新站點模態視窗 -->
+  <div class="modal fade" id="createWorkstationModal" tabindex="-1" aria-labelledby="createWorkstationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createWorkstationModalLabel">
+            <i class="fas fa-plus-circle me-2"></i> 創建新站點
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">站點名稱</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-map-marker-alt"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入站點名稱" id="newStationName">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> 取消
+          </button>
+          <button type="button" class="btn btn-info" id="createWorkstationBtn">
+            <i class="fas fa-check me-1"></i> 送出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 編輯站點模態視窗 -->
+  <div class="modal fade" id="editWorkstationModal" tabindex="-1" aria-labelledby="editWorkstationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editWorkstationModalLabel">
+            <i class="fas fa-edit me-2"></i> 編輯站點
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editStationId">
+          
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">站點名稱</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-map-marker-alt"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入站點名稱" id="editStationName">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> 取消
+          </button>
+          <button type="button" class="btn btn-info" id="updateWorkstationBtn">
+            <i class="fas fa-check me-1"></i> 送出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 創建新帳號模態視窗 -->
+  <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createAccountModalLabel">
+            <i class="fas fa-user-plus me-2"></i> 創建新帳號
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">員工名稱</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-user"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入員工名稱" id="newEmployeeName">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">工號</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-id-card"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入工號" id="newEmployeeId">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> 取消
+          </button>
+          <button type="button" class="btn btn-info" id="saveAccountBtn">
+            <i class="fas fa-check me-1"></i> 送出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 編輯帳號模態視窗 -->
+  <div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editAccountModalLabel">
+            <i class="fas fa-user-edit me-2"></i> 編輯帳號
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editAccountId">
+          
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">員工名稱</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-user"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入員工名稱" id="editEmployeeName">
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label d-block mb-2">工號</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-dark text-light">
+                <i class="fas fa-id-card"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="輸入工號" id="editEmployeeId">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> 取消
+          </button>
+          <button type="button" class="btn btn-info" id="updateAccountBtn">
+            <i class="fas fa-check me-1"></i> 送出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 和 JavaScript 引用 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 等待文檔完全加載
+    document.addEventListener('DOMContentLoaded', function() {
+      // 應用淡入動畫
+      document.querySelectorAll('.fade-in').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 100 * index);
+      });
+      
+      // 創建新站點功能
+      const createWorkstationBtn = document.getElementById('createWorkstationBtn');
+      if (createWorkstationBtn) {
+        createWorkstationBtn.addEventListener('click', function() {
+          const stationName = document.getElementById('newStationName').value;
+          if (!stationName.trim()) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#createWorkstationModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入站點名稱
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          // 這裡添加保存站點的邏輯
+          // 模擬成功保存後的操作
+          
+          // 清空輸入框並關閉 Modal
+          document.getElementById('newStationName').value = '';
+          const modal = bootstrap.Modal.getInstance(document.getElementById('createWorkstationModal'));
+          modal.hide();
+          
+          // 添加成功通知
+          const mainContent = document.querySelector('.main-content');
+          const successAlert = document.createElement('div');
+          successAlert.className = 'alert alert-success alert-dismissible fade show';
+          successAlert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            站點 <strong>${stationName}</strong> 創建成功！
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          
+          mainContent.insertBefore(successAlert, mainContent.firstChild);
+          
+          // 5秒後自動移除提示
+          setTimeout(() => {
+            successAlert.classList.add('fade');
+            setTimeout(() => successAlert.remove(), 300);
+          }, 5000);
+          
+          // 可選：刷新站點列表或添加新站點到列表中
+          addStationToList(stationName);
+        });
+      }
+      
+      // 創建新帳號功能
+      const saveAccountBtn = document.getElementById('saveAccountBtn');
+      if (saveAccountBtn) {
+        saveAccountBtn.addEventListener('click', function() {
+          const employeeName = document.getElementById('newEmployeeName').value.trim();
+          const employeeId = document.getElementById('newEmployeeId').value.trim();
+          
+          if (!employeeName) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#createAccountModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入員工名稱
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          if (!employeeId) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#createAccountModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入工號
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          // 這裡添加保存帳號的邏輯
+          // 模擬成功保存後的操作
+          
+          // 清空輸入框並關閉 Modal
+          document.getElementById('newEmployeeName').value = '';
+          document.getElementById('newEmployeeId').value = '';
+          const modal = bootstrap.Modal.getInstance(document.getElementById('createAccountModal'));
+          modal.hide();
+          
+          // 添加成功通知
+          const mainContent = document.querySelector('.main-content');
+          const successAlert = document.createElement('div');
+          successAlert.className = 'alert alert-success alert-dismissible fade show';
+          successAlert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            帳號 <strong>${employeeName}</strong> (${employeeId}) 創建成功！
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          
+          mainContent.insertBefore(successAlert, mainContent.firstChild);
+          
+          // 5秒後自動移除提示
+          setTimeout(() => {
+            successAlert.classList.add('fade');
+            setTimeout(() => successAlert.remove(), 300);
+          }, 5000);
+          
+          // 可選：刷新帳號列表或添加新帳號到列表中
+          addAccountToList(employeeName, employeeId);
+        });
+      }
+      
+      // 輔助函數：添加新站點到列表
+      function addStationToList(stationName) {
+        const container = document.getElementById('workstationContainer');
+        if (!container) return;
+        
+        const stationId = Date.now(); // 使用時間戳作為臨時 ID
+        
+        const stationHtml = `
+          <div class="col-md-3 mb-2">
+            <div class="station-card" data-station-id="${stationId}">
+              <div class="station-card-header">
+                <span class="station-name">${stationName}</span>
+                <div>
+                  <button class="btn btn-sm btn-info me-1 edit-station-btn" data-bs-toggle="modal" data-bs-target="#editWorkstationModal">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger delete-station-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="station-details">
+                <div class="mt-1">
+                  <!-- 新站點暫無人員 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 創建新元素並添加淡入動畫
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = stationHtml.trim();
+        const newStationElement = tempDiv.firstChild;
+        newStationElement.style.opacity = '0';
+        newStationElement.style.transform = 'translateY(20px)';
+        
+        container.appendChild(newStationElement);
+        
+        // 應用淡入動畫
+        setTimeout(() => {
+          newStationElement.style.transition = 'all 0.5s ease';
+          newStationElement.style.opacity = '1';
+          newStationElement.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // 為新添加的按鈕綁定事件
+        bindStationButtons();
+      }
+      
+      // 輔助函數：添加新帳號到列表
+      function addAccountToList(employeeName, employeeId) {
+        const tableBody = document.querySelector('.table tbody');
+        if (!tableBody) return;
+        
+        const userId = Date.now(); // 使用時間戳作為臨時 ID
+        const currentDate = new Date().toISOString().split('T')[0]; // 獲取當前日期
+        
+        const accountHtml = `
+          <tr>
+            <td>${userId}</td>
+            <td>${employeeName}</td>
+            <td>${employeeId}</td>
+            <td>
+              <span class="badge badge-user px-2 py-1">運勢專員</span>
+            </td>
+            <td>
+              <!-- 新帳號暫無站點權限 -->
+            </td>
+            <td>
+              <small class="d-block mb-1">建立日期: ${currentDate}</small>
+              <small class="d-block mb-2">最後更新: ${currentDate}</small>
+              <button class="btn btn-sm btn-info me-1 edit-account-btn" data-bs-toggle="modal" data-bs-target="#editAccountModal" data-user-id="${userId}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger delete-account-btn" data-user-id="${userId}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        
+        // 創建新行並添加淡入動畫
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = accountHtml.trim();
+        newRow.style.opacity = '0';
+        
+        tableBody.appendChild(newRow);
+        
+        // 應用淡入動畫
+        setTimeout(() => {
+          newRow.style.transition = 'opacity 0.5s ease';
+          newRow.style.opacity = '1';
+        }, 10);
+        
+        // 為新添加的按鈕綁定事件
+        bindAccountButtons();
+      }
+      
+      // 為站點按鈕綁定事件
+      function bindStationButtons() {
+        // 刪除站點按鈕事件
+        document.querySelectorAll('.delete-station-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const stationCard = this.closest('.station-card');
+            const stationName = stationCard.querySelector('.station-name').textContent;
+            
+            // 顯示確認對話框
+            const confirmBox = document.createElement('div');
+            confirmBox.className = 'modal fade';
+            confirmBox.id = 'confirmDeleteModal';
+            confirmBox.setAttribute('tabindex', '-1');
+            confirmBox.setAttribute('aria-hidden', 'true');
+            confirmBox.innerHTML = `
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                      確認刪除
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>確定要刪除站點 <strong>${stationName}</strong> 嗎？此操作無法撤銷。</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="fas fa-times me-1"></i> 取消
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                      <i class="fas fa-trash me-1"></i> 確認刪除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+            
+            document.body.appendChild(confirmBox);
+            
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            confirmModal.show();
+            
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+              confirmModal.hide();
+              
+              // 獲取包含站點卡片的列
+              const stationCol = stationCard.closest('.col-md-3');
+              
+              // 添加退出動畫
+              stationCol.style.transition = 'all 0.5s ease';
+              stationCol.style.opacity = '0';
+              stationCol.style.transform = 'translateY(-20px)';
+              
+              // 等待動畫完成後刪除元素
+              setTimeout(() => {
+                stationCol.remove();
+                document.getElementById('confirmDeleteModal').remove();
+                
+                // 顯示成功通知
+                const mainContent = document.querySelector('.main-content');
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success alert-dismissible fade show';
+                successAlert.innerHTML = `
+                  <i class="fas fa-check-circle me-2"></i>
+                  站點 <strong>${stationName}</strong> 已成功刪除
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                mainContent.insertBefore(successAlert, mainContent.firstChild);
+                
+                // 5秒後自動移除提示
+                setTimeout(() => {
+                  successAlert.classList.add('fade');
+                  setTimeout(() => successAlert.remove(), 300);
+                }, 5000);
+              }, 500);
+            });
+          });
+        });
+        
+        // 編輯站點按鈕事件
+        document.querySelectorAll('.edit-station-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const stationCard = this.closest('.station-card');
+            const stationId = stationCard.dataset.stationId;
+            const stationName = stationCard.querySelector('.station-name').textContent;
+            
+            document.getElementById('editStationId').value = stationId;
+            document.getElementById('editStationName').value = stationName;
+          });
+        });
+      }
+      
+      // 為帳號按鈕綁定事件
+      function bindAccountButtons() {
+        // 刪除帳號按鈕事件
+        document.querySelectorAll('.delete-account-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const userName = row.cells[1].textContent;
+            const userId = this.dataset.userId;
+            
+            // 顯示確認對話框
+            const confirmBox = document.createElement('div');
+            confirmBox.className = 'modal fade';
+            confirmBox.id = 'confirmDeleteAccountModal';
+            confirmBox.setAttribute('tabindex', '-1');
+            confirmBox.setAttribute('aria-hidden', 'true');
+            confirmBox.innerHTML = `
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                      確認刪除
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>確定要刪除帳號 <strong>${userName}</strong> 嗎？此操作無法撤銷。</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="fas fa-times me-1"></i> 取消
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAccountBtn">
+                      <i class="fas fa-trash me-1"></i> 確認刪除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+            
+            document.body.appendChild(confirmBox);
+            
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteAccountModal'));
+            confirmModal.show();
+            
+            document.getElementById('confirmDeleteAccountBtn').addEventListener('click', function() {
+              confirmModal.hide();
+              
+              // 添加退出動畫
+              row.style.transition = 'all 0.5s ease';
+              row.style.opacity = '0';
+              row.style.transform = 'translateY(-20px)';
+              
+              // 等待動畫完成後刪除元素
+              setTimeout(() => {
+                row.remove();
+                document.getElementById('confirmDeleteAccountModal').remove();
+                
+                // 顯示成功通知
+                const mainContent = document.querySelector('.main-content');
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success alert-dismissible fade show';
+                successAlert.innerHTML = `
+                  <i class="fas fa-check-circle me-2"></i>
+                  帳號 <strong>${userName}</strong> 已成功刪除
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                mainContent.insertBefore(successAlert, mainContent.firstChild);
+                
+                // 5秒後自動移除提示
+                setTimeout(() => {
+                  successAlert.classList.add('fade');
+                  setTimeout(() => successAlert.remove(), 300);
+                }, 5000);
+              }, 500);
+            });
+          });
+        });
+        
+        // 編輯帳號按鈕事件
+        document.querySelectorAll('.edit-account-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const row = this.closest('tr');
+            const employeeName = row.cells[1].textContent;
+            const employeeId = row.cells[2].textContent;
+            
+            document.getElementById('editAccountId').value = userId;
+            document.getElementById('editEmployeeName').value = employeeName;
+            document.getElementById('editEmployeeId').value = employeeId;
+          });
+        });
+      }
+      
+      // 更新站點按鈕事件
+      const updateWorkstationBtn = document.getElementById('updateWorkstationBtn');
+      if (updateWorkstationBtn) {
+        updateWorkstationBtn.addEventListener('click', function() {
+          const stationId = document.getElementById('editStationId').value;
+          const stationName = document.getElementById('editStationName').value;
+          
+          if (!stationName.trim()) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#editWorkstationModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入站點名稱
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          // 獲取舊站點名稱
+          const stationCard = document.querySelector(`.station-card[data-station-id="${stationId}"]`);
+          const oldStationName = stationCard ? stationCard.querySelector('.station-name').textContent : '';
+          
+          // 更新站點名稱
+          if (stationCard) {
+            stationCard.querySelector('.station-name').textContent = stationName;
+          }
+          
+          // 關閉 Modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('editWorkstationModal'));
+          modal.hide();
+          
+          // 顯示成功通知
+          const mainContent = document.querySelector('.main-content');
+          const successAlert = document.createElement('div');
+          successAlert.className = 'alert alert-success alert-dismissible fade show';
+          successAlert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            站點已從 <strong>${oldStationName}</strong> 更新為 <strong>${stationName}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          
+          mainContent.insertBefore(successAlert, mainContent.firstChild);
+          
+          // 5秒後自動移除提示
+          setTimeout(() => {
+            successAlert.classList.add('fade');
+            setTimeout(() => successAlert.remove(), 300);
+          }, 5000);
+        });
+      }
+      
+      // 更新帳號按鈕事件
+      const updateAccountBtn = document.getElementById('updateAccountBtn');
+      if (updateAccountBtn) {
+        updateAccountBtn.addEventListener('click', function() {
+          const userId = document.getElementById('editAccountId').value;
+          const employeeName = document.getElementById('editEmployeeName').value;
+          const employeeId = document.getElementById('editEmployeeId').value;
+          
+          if (!employeeName.trim()) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#editAccountModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入員工名稱
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          if (!employeeId.trim()) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('#editAccountModal .modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              請輸入工號
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          // 獲取帳號信息
+          const editBtn = document.querySelector(`.edit-account-btn[data-user-id="${userId}"]`);
+          if (editBtn) {
+            const row = editBtn.closest('tr');
+            const oldEmployeeName = row.cells[1].textContent;
+            
+            row.cells[1].textContent = employeeName;
+            row.cells[2].textContent = employeeId;
+            
+            // 更新最後更新日期
+            const currentDate = new Date().toISOString().split('T')[0];
+            const lastUpdateEl = row.querySelector('small:nth-child(2)');
+            if (lastUpdateEl) {
+              lastUpdateEl.textContent = `最後更新: ${currentDate}`;
+            }
+            
+            // 關閉 Modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editAccountModal'));
+            modal.hide();
+            
+            // 顯示成功通知
+            const mainContent = document.querySelector('.main-content');
+            const successAlert = document.createElement('div');
+            successAlert.className = 'alert alert-success alert-dismissible fade show';
+            successAlert.innerHTML = `
+              <i class="fas fa-check-circle me-2"></i>
+              帳號 <strong>${oldEmployeeName}</strong> 已更新為 <strong>${employeeName}</strong> (${employeeId})
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            mainContent.insertBefore(successAlert, mainContent.firstChild);
+            
+            // 5秒後自動移除提示
+            setTimeout(() => {
+              successAlert.classList.add('fade');
+              setTimeout(() => successAlert.remove(), 300);
+            }, 5000);
+          }
+        });
+      }
+      
+      // 初始化綁定現有按鈕的事件
+      bindStationButtons();
+      bindAccountButtons();
+      
+      // 添加簡單的主題切換功能
+      const themeToggleBtn = document.createElement('button');
+      themeToggleBtn.className = 'btn btn-sm position-fixed bottom-0 end-0 m-3';
+      themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      themeToggleBtn.style.zIndex = '1000';
+      themeToggleBtn.style.borderRadius = '50%';
+      themeToggleBtn.style.width = '45px';
+      themeToggleBtn.style.height = '45px';
+      themeToggleBtn.style.backgroundColor = 'var(--secondary-bg)';
+      themeToggleBtn.style.color = 'var(--accent-color)';
+      themeToggleBtn.style.boxShadow = 'var(--box-shadow)';
+      
+      // 添加懸停效果
+      themeToggleBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1)';
+      });
+      
+      themeToggleBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+      
+      document.body.appendChild(themeToggleBtn);
+    });
+  </script>
+</body>
+</html>

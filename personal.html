@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Runcard - User Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-bg: #0d1321;
+      --secondary-bg: #1a2235;
+      --accent-color: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --card-bg: #101726;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s ease;
+    }
+    
+    /* Base Styles */
+    body {
+      background: linear-gradient(135deg, var(--primary-bg), #152238);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--primary-bg);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #2c3e50;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3e5472;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      background: linear-gradient(180deg, rgba(13, 19, 33, 0.95), rgba(21, 34, 56, 0.95));
+      backdrop-filter: blur(10px);
+      min-height: 100vh;
+      padding: 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    
+    .sidebar-header {
+      padding: 24px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-brand {
+      color: var(--accent-color);
+      font-size: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    .sidebar-brand:hover {
+      color: #5ce0d8;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link {
+      color: var(--text-secondary);
+      padding: 12px 20px;
+      margin: 6px 10px;
+      border-radius: 8px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-link:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover:before {
+      left: 100%;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--secondary-bg);
+      color: var(--text-primary);
+      transform: translateX(5px);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+      border-left: 3px solid var(--accent-color);
+      font-weight: 500;
+    }
+    
+    .nav-link i {
+      margin-right: 10px;
+      width: 18px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover i {
+      transform: scale(1.2);
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      padding: 30px;
+    }
+    
+    .page-title {
+      color: var(--text-primary);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(92, 224, 216, 0.3);
+      position: relative;
+    }
+    
+    .page-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+    
+    .content-wrapper {
+      background-color: rgba(30, 41, 59, 0.4);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--box-shadow);
+    }
+    
+    /* Card Styles */
+    .info-box {
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: linear-gradient(145deg, var(--secondary-bg), rgba(26, 34, 53, 0.8));
+      border-radius: var(--border-radius);
+      padding: 25px;
+      height: 100%;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(5px);
+    }
+    
+    .info-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .info-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      font-weight: 600;
+    }
+    
+    .info-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 40px;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+    
+    /* Header Navigation */
+    .header-nav {
+      background: rgba(13, 19, 33, 0.8);
+      padding: 15px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+    
+    .language-switch, .user-dropdown {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 24px;
+      padding: 8px 18px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .language-switch:hover, .user-dropdown:hover {
+      background: rgba(56, 189, 248, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .badge {
+      transition: var(--transition);
+    }
+    
+    .user-dropdown:hover .badge {
+      transform: scale(1.1);
+    }
+    
+    /* Button Styles */
+    .btn {
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    
+    .btn-info {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(145deg, var(--danger-color), #b91c1c);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background: linear-gradient(145deg, #dc2626, #991b1b);
+      border-color: #dc2626;
+    }
+    
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .btn i {
+      margin-right: 5px;
+    }
+    
+    .user-type {
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+    }
+    
+    .password-reset {
+      margin-top: 15px;
+    }
+    
+    .cardnewcolor{
+      color: var(--accent-color);
+    }
+    
+    /* 身份列表樣式 */
+    .identity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .identity-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.3);
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    
+    .identity-item:hover {
+      background: rgba(15, 23, 42, 0.6);
+      transform: translateX(5px);
+    }
+    
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+    
+    .dot-1 { background-color: #ff5252; }  /* 紅色 */
+    .dot-2 { background-color: #ff4f7e; }  /* 粉紅色 */
+    .dot-3 { background-color: #4ade80; }  /* 綠色 */
+    .dot-4 { background-color: #38bdf8; }  /* 藍色 */
+    .dot-5 { background-color: #a78bfa; }  /* 紫色 */
+    .dot-6 { background-color: #facc15; }  /* 黃色 */
+    .dot-7 { background-color: #f97316; }  /* 橙色 */
+    .dot-8 { background-color: #10b981; }  /* 綠松色 */
+    .dot-9 { background-color: #6366f1; }  /* 靛藍色 */
+    .dot-10 { background-color: #ec4899; } /* 品紅色 */
+    
+    .identity-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    /* 站點列表樣式 */
+    .station-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .employee-role-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .employee-role-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(15, 23, 42, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    
+    .employee-role-row:hover {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    
+    .role-label {
+      width: 80px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    .role-input {
+      flex: 1;
+    }
+    
+    .role-actions {
+      width: auto;
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Modal Styles */
+    .modal-content {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-header, .modal-footer {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-title {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    .modal-backdrop {
+      backdrop-filter: blur(5px);
+    }
+    
+    .btn-close-white {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    
+    /* 用戶信息卡片樣式 */
+    .user-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .user-card {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 15px;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .user-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .user-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .user-card-name {
+      font-size: 18px;
+      color: white;
+      font-weight: 500;
+    }
+    
+    .user-id-badge {
+      background-color: rgba(56, 189, 248, 0.2);
+      color: var(--accent-color);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .user-info-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    
+    .user-info-label {
+      width: 120px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .user-info-value {
+      flex: 1;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+    
+    .user-info-value.status-active {
+      color: var(--success-color); /* 綠色 - 活躍狀態 */
+    }
+    
+    .user-info-value.status-inactive {
+      color: var(--danger-color); /* 紅色 - 不活躍狀態 */
+    }
+    
+    .user-card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Form Styles */
+    .form-label {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .form-control, .form-select {
+      background-color: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 10px 15px;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(15, 23, 42, 0.6);
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+    
+    /* Alert Styles */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 20px;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .alert-success {
+      background-color: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .sidebar {
+        min-height: auto;
+      }
+      
+      .main-content {
+        padding: 20px;
+      }
+      
+      .info-box {
+        margin-bottom: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .employee-role-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .role-label {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      
+      .role-input, .role-actions {
+        width: 100%;
+      }
+      
+      .page-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      <!-- Sidebar -->
+      <div class="col-md-2 sidebar">
+        <div class="sidebar-header">
+          <a href="#" class="sidebar-brand">
+            <img src="/api/placeholder/28/28" alt="Logo" class="me-2" style="filter: drop-shadow(0 0 5px rgba(92, 224, 216, 0.5));">
+            E-Runcard
+          </a>
+        </div>
+        <div class="mt-4">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-list"></i> Runcards List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-building"></i> WorkStation
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-tasks"></i> Process Card
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-exclamation-triangle"></i> DMR List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="fas fa-users"></i> Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-plus-circle"></i> add Demo
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="col-md-10">
+        <!-- Top Navigation -->
+        <div class="d-flex justify-content-end header-nav">
+          <div class="d-flex align-items-center">
+            <div class="language-switch me-3">
+              <i class="fas fa-globe me-1"></i> EN
+            </div>
+            <div class="user-dropdown">
+              <i class="fas fa-user-circle me-1"></i> 林丹宜 <span class="badge bg-success rounded-pill ms-1">2</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <h1 class="page-title">Personal page</h1>
+          
+          <!-- First Row -->
+          <div class="row">
+            <!-- User Identity Section -->
+            <div class="col-md-6 mb-4 fade-in" style="animation-delay: 0.1s;">
+              <div class="info-box">
+                <h3 class="info-title">
+                  <i class="fas fa-id-badge me-2"></i>
+                  使用者身分 <small>(往下列表)</small>
+                </h3>
+                
+                <div class="user-roles">
+                  <p class="mb-3">登入這個網站的使用者同時有多個身分：</p>
+                  <div class="identity-list">
+                    <div class="identity-item">
+                      <span class="dot dot-1"></span>
+                      <span class="identity-name">系大導童軍主任</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-2"></span>
+                      <span class="identity-name">MOD</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-3"></span>
+                      <span class="identity-name">三結語Member</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-4"></span>
+                      <span class="identity-name">運勢專員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-5"></span>
+                      <span class="identity-name">資料人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-6"></span>
+                      <span class="identity-name">B1 倉儲人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-7"></span>
+                      <span class="identity-name">B3 查詢人員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-8"></span>
+                      <span class="identity-name">品管主管</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-9"></span>
+                      <span class="identity-name">生產專員</span>
+                    </div>
+                    <div class="identity-item">
+                      <span class="dot dot-10"></span>
+                      <span class="identity-name">系統管理員</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- User Information Section - NEW SECTION REPLACING EMPLOYEE MANAGEMENT -->
+            <div class="col-md-6 mb-4 fade-in" style="animation-delay: 0.2s;">
+              <div class="info-box">
+                <h3 class="info-title">
+                  <i class="fas fa-user-circle me-2"></i>
+                  用戶資訊
+                </h3>
+                
+                <div class="user-info-container">
+                  <!-- User 1 -->
+                  <div class="user-card">
+                    <div class="user-card-header">
+                      <div class="user-card-name">徐健恩</div>
+                      <div class="user-id-badge">ID: EMP10042</div>
+                    </div>
+                    
+                    <div class="user-info-item">
+                      <div class="user-info-label">
+                        <i class="fas fa-id-badge me-2"></i>工號:
+                      </div>
+                      <div class="user-info-value">EMP10042</div>
+                    </div>
+                    
+                    <div class="user-info-item">
+                      <div class="user-info-label">
+                        <i class="fas fa-calendar-plus me-2"></i>註冊時間:
+                      </div>
+                      <div class="user-info-value">2023-05-15 09:30:45</div>
+                    </div>
+                    
+                    <div class="user-info-item">
+                      <div class="user-info-label">
+                        <i class="fas fa-clock me-2"></i>上次登入:
+                      </div>
+                      <div class="user-info-value status-active">2025-04-15 14:28:33</div>
+                    </div>
+                    
+                    <div class="user-card-actions">
+                      <button class="btn btn-info btn-sm">
+                        <i class="fas fa-key me-1"></i>修改密碼
+                      </button>
+                      <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>編輯
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Modal for adding user -->
+            <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">
+                      <i class="fas fa-user-plus me-2"></i> 新增用戶
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- User input form -->
+                    <div class="mb-3">
+                      <label class="form-label d-block">用戶名稱</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-dark border-dark text-light">
+                          <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="輸入用戶名稱" id="modalUserName">
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label d-block">工號</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-dark border-dark text-light">
+                          <i class="fas fa-id-card"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="輸入工號" id="modalEmployeeId">
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label d-block">密碼</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-dark border-dark text-light">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" placeholder="輸入密碼" id="modalPassword">
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label d-block">確認密碼</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-dark border-dark text-light">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" placeholder="再次輸入密碼" id="modalConfirmPassword">
+                      </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label d-block">選擇用戶身份</label>
+                      <select class="form-select" multiple id="modalUserRoles">
+                        <option value="1">系大導童軍主任</option>
+                        <option value="2">MOD</option>
+                        <option value="3">三結語Member</option>
+                        <option value="4">運勢專員</option>
+                        <option value="5">資料人員</option>
+                        <option value="6">B1 倉儲人員</option>
+                        <option value="7">B3 查詢人員</option>
+                        <option value="8">品管主管</option>
+                        <option value="9">生產專員</option>
+                        <option value="10">系統管理員</option>
+                      </select>
+                      <small class="text-muted">按住 Ctrl 鍵可選擇多個身份</small>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="fas fa-times me-1"></i> 取消
+                    </button>
+                    <button type="button" class="btn btn-info" id="modalAddUserBtn">
+                      <i class="fas fa-user-plus me-1"></i> 新增
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- JavaScript 集合 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 應用淡入動畫
+      document.querySelectorAll('.fade-in').forEach((el, index) => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 100 * index);
+      });
+      
+      // ===== 新用戶模態框 =====
+      const modalAddUserBtn = document.getElementById('modalAddUserBtn');
+      if (modalAddUserBtn) {
+        modalAddUserBtn.addEventListener('click', function() {
+          const userName = document.getElementById('modalUserName').value;
+          const employeeId = document.getElementById('modalEmployeeId').value;
+          const password = document.getElementById('modalPassword').value;
+          const confirmPassword = document.getElementById('modalConfirmPassword').value;
+          
+          // 簡單驗證
+          if (!userName || !employeeId || !password) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('.modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-circle me-2"></i>
+              請填寫所有必填欄位
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          if (password !== confirmPassword) {
+            // 顯示錯誤提示
+            const modalBody = document.querySelector('.modal-body');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+              <i class="fas fa-exclamation-circle me-2"></i>
+              兩次輸入的密碼不一致
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            modalBody.appendChild(alert);
+            
+            // 3秒後自動移除提示
+            setTimeout(() => {
+              alert.classList.add('fade');
+              setTimeout(() => alert.remove(), 300);
+            }, 3000);
+            
+            return;
+          }
+          
+          // 這裡可以添加將數據提交到後端的代碼
+          // 關閉模態框
+          const userModal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+          userModal.hide();
+          
+          // 添加成功通知
+          const mainContent = document.querySelector('.main-content');
+          const successAlert = document.createElement('div');
+          successAlert.className = 'alert alert-success alert-dismissible fade show';
+          successAlert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            已成功新增用戶：<strong>${userName}</strong> (工號: ${employeeId})
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          
+          mainContent.insertBefore(successAlert, mainContent.firstChild);
+          
+          // 5秒後自動移除提示
+          setTimeout(() => {
+            successAlert.classList.add('fade');
+            setTimeout(() => successAlert.remove(), 300);
+          }, 5000);
+          
+          // 清空輸入框
+          document.getElementById('modalUserName').value = '';
+          document.getElementById('modalEmployeeId').value = '';
+          document.getElementById('modalPassword').value = '';
+          document.getElementById('modalConfirmPassword').value = '';
+        });
+      }
+
+      // ===== 密碼修改相關功能 =====
+      // 密碼修改表單相關
+      const passwordForm = document.getElementById('passwordForm');
+      const employeeSelect = document.getElementById('employeeSelect');
+      const currentPassword = document.getElementById('currentPassword');
+      const newPassword = document.getElementById('newPassword');
+      const confirmPassword = document.getElementById('confirmPassword');
+      const changePasswordBtn = document.getElementById('changePasswordBtn');
+      const successMessage = document.getElementById('successMessage');
+      
+      // 添加主題切換按鈕
+      const themeToggleBtn = document.createElement('button');
+      themeToggleBtn.className = 'btn btn-sm position-fixed bottom-0 end-0 m-3';
+      themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      themeToggleBtn.style.zIndex = '1000';
+      themeToggleBtn.style.borderRadius = '50%';
+      themeToggleBtn.style.width = '45px';
+      themeToggleBtn.style.height = '45px';
+      themeToggleBtn.style.backgroundColor = 'var(--secondary-bg)';
+      themeToggleBtn.style.color = 'var(--accent-color)';
+      themeToggleBtn.style.boxShadow = 'var(--box-shadow)';
+      
+      // 添加懸停效果
+      themeToggleBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1)';
+      });
+      
+      themeToggleBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+      
+      document.body.appendChild(themeToggleBtn);
+    });
+  </script>
+</body>
+</html>
