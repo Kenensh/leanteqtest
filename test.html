@@ -1,798 +1,526 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Runcard - User Management</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary-bg: #0d1321;
-      --secondary-bg: #1a2235;
-      --accent-color: #38bdf8;
-      --accent-hover: #0ea5e9;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --card-bg: #101726;
-      --danger-color: #ef4444;
-      --success-color: #22c55e;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --transition: all 0.3s ease;
-    }
-    
-    /* Base Styles */
-    body {
-      background: linear-gradient(135deg, var(--primary-bg), #152238);
-      color: var(--text-primary);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-    }
-    
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: var(--primary-bg);
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #2c3e50;
-      border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: #3e5472;
-    }
-    
-    /* Sidebar Styles */
-    .sidebar {
-      background: linear-gradient(180deg, rgba(13, 19, 33, 0.95), rgba(21, 34, 56, 0.95));
-      backdrop-filter: blur(10px);
-      min-height: 100vh;
-      padding: 0;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      transition: var(--transition);
-    }
-    
-    .sidebar-header {
-      padding: 24px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .sidebar-brand {
-      color: var(--accent-color);
-      font-size: 24px;
-      font-weight: 600;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      transition: var(--transition);
-    }
-    
-    .sidebar-brand:hover {
-      color: #5ce0d8;
-      transform: translateY(-2px);
-    }
-    
-    .nav-link {
-      color: var(--text-secondary);
-      padding: 12px 20px;
-      margin: 6px 10px;
-      border-radius: 8px;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-    }
-    
-    .nav-link:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-      transition: var(--transition);
-    }
-    
-    .nav-link:hover:before {
-      left: 100%;
-    }
-    
-    .nav-link:hover, .nav-link.active {
-      background-color: var(--secondary-bg);
-      color: var(--text-primary);
-      transform: translateX(5px);
-      box-shadow: var(--box-shadow);
-    }
-    
-    .nav-link.active {
-      background: linear-gradient(90deg, var(--accent-color), transparent);
-      border-left: 3px solid var(--accent-color);
-      font-weight: 500;
-    }
-    
-    .nav-link i {
-      margin-right: 10px;
-      width: 18px;
-      text-align: center;
-      transition: var(--transition);
-    }
-    
-    .nav-link:hover i {
-      transform: scale(1.2);
-    }
-    
-    /* Main Content Styles */
-    .main-content {
-      padding: 30px;
-    }
-    
-    .page-title {
-      color: var(--text-primary);
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 30px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid rgba(92, 224, 216, 0.3);
-      position: relative;
-    }
-    
-    .page-title:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -2px;
-      width: 60px;
-      height: 2px;
-      background-color: var(--accent-color);
-    }
-    
-    /* Card Styles */
-    .info-box {
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      background: linear-gradient(145deg, var(--secondary-bg), rgba(26, 34, 53, 0.8));
-      border-radius: var(--border-radius);
-      padding: 25px;
-      height: 100%;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      backdrop-filter: blur(5px);
-    }
-    
-    .info-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-    }
-    
-    .info-title {
-      font-size: 18px;
-      color: var(--text-primary);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      font-weight: 600;
-    }
-    
-    .info-title:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -1px;
-      width: 40px;
-      height: 2px;
-      background-color: var(--accent-color);
-    }
-    
-    /* Header Navigation */
-    .header-nav {
-      background: rgba(13, 19, 33, 0.8);
-      padding: 15px 30px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-    }
-    
-    .language-switch, .user-dropdown {
-      background: rgba(30, 41, 59, 0.6);
-      border-radius: 24px;
-      padding: 8px 18px;
-      color: var(--text-primary);
-      font-size: 14px;
-      transition: var(--transition);
-      cursor: pointer;
-      box-shadow: var(--box-shadow);
-    }
-    
-    .language-switch:hover, .user-dropdown:hover {
-      background: rgba(56, 189, 248, 0.15);
-      transform: translateY(-2px);
-    }
-    
-    .badge {
-      transition: var(--transition);
-    }
-    
-    .user-dropdown:hover .badge {
-      transform: scale(1.1);
-    }
-    
-    /* Button Styles */
-    .btn {
-      border-radius: 8px;
-      padding: 8px 20px;
-      font-weight: 500;
-      transition: var(--transition);
-      box-shadow: var(--box-shadow);
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .btn:active {
-      transform: translateY(0);
-    }
-    
-    .btn-info {
-      background-color: var(--accent-color);
-      border-color: var(--accent-color);
-      color: white;
-    }
-    
-    .btn-info:hover {
-      background-color: var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-    
-    .btn-danger {
-      background: linear-gradient(145deg, var(--danger-color), #b91c1c);
-      border-color: var(--danger-color);
-    }
-    
-    .btn-danger:hover {
-      background: linear-gradient(145deg, #dc2626, #991b1b);
-      border-color: #dc2626;
-    }
-    
-    .btn-sm {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-    }
-    
-    .btn i {
-      margin-right: 5px;
-    }
-    
-    /* Identity List Styles */
-    .identity-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .identity-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 12px;
-      background: rgba(15, 23, 42, 0.3);
-      border-radius: 8px;
-      transition: var(--transition);
-    }
-    
-    .identity-item:hover {
-      background: rgba(15, 23, 42, 0.6);
-      transform: translateX(5px);
-    }
-    
-    .dot {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 10px;
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-    }
-    
-    .dot-1 { background-color: #ff5252; }  /* 紅色 */
-    .dot-2 { background-color: #ff4f7e; }  /* 粉紅色 */
-    .dot-3 { background-color: #4ade80; }  /* 綠色 */
-    .dot-4 { background-color: #38bdf8; }  /* 藍色 */
-    .dot-5 { background-color: #a78bfa; }  /* 紫色 */
-    .dot-6 { background-color: #facc15; }  /* 黃色 */
-    .dot-7 { background-color: #f97316; }  /* 橙色 */
-    .dot-8 { background-color: #10b981; }  /* 綠松色 */
-    .dot-9 { background-color: #6366f1; }  /* 靛藍色 */
-    .dot-10 { background-color: #ec4899; } /* 品紅色 */
-    
-    .identity-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-    
-    /* Employee Card Styles */
-    .employee-info-container {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-top: 10px;
-    }
-    
-    .employee-card {
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .employee-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    
-    .employee-card-name {
-      font-size: 16px;
-      padding: 16px;
-      color: white;
-      font-weight: 500;
-      background: linear-gradient(90deg, rgba(56, 189, 248, 0.2), transparent);
-      border-left: 3px solid var(--accent-color);
-    }
-    
-    .employee-card-stations {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 0 16px 16px;
-    }
-    
-    .station-badge {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(239, 68, 68, 0.15);
-      color: white;
-      font-size: 13px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: var(--transition);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .station-badge:hover {
-      background: rgba(239, 68, 68, 0.25);
-      transform: translateY(-2px);
-    }
-    
-    .station-badge i {
-      color: #ff4f7e;
-      margin-right: 5px;
-      font-size: 11px;
-    }
-    
-    /* Form Styles */
-    .form-label {
-      color: var(--text-primary);
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-    
-    .form-control, .form-select {
-      background-color: rgba(15, 23, 42, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-primary);
-      border-radius: 8px;
-      padding: 10px 15px;
-      transition: var(--transition);
-    }
-    
-    .form-control:focus, .form-select:focus {
-      background-color: rgba(15, 23, 42, 0.6);
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-    }
-    
-    .form-control.is-invalid {
-      border-color: var(--danger-color);
-      background-image: none;
-    }
-    
-    .form-control.is-invalid:focus {
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
-    }
-    
-    .invalid-feedback {
-      color: var(--danger-color);
-      font-size: 12px;
-      margin-top: 5px;
-    }
-    
-    /* Modal Styles */
-    .modal-content {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--border-radius);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
-    
-    .modal-header, .modal-footer {
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .modal-title {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-    
-    .modal-backdrop {
-      backdrop-filter: blur(5px);
-    }
-    
-    /* Employee Input Styles */
-    .employee-role-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 20px;
-    }
-    
-    .employee-role-row {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      background: rgba(15, 23, 42, 0.3);
-      padding: 15px;
-      border-radius: 8px;
-      transition: var(--transition);
-    }
-    
-    .employee-role-row:hover {
-      background: rgba(15, 23, 42, 0.5);
-    }
-    
-    .role-label {
-      width: 80px;
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-    
-    .role-input {
-      flex: 1;
-    }
-    
-    .role-actions {
-      width: auto;
-      display: flex;
-      gap: 8px;
-    }
-    
-    /* Alert Styles */
-    .alert {
-      border-radius: 8px;
-      padding: 12px 20px;
-      box-shadow: var(--box-shadow);
-    }
-    
-    .alert-success {
-      background-color: rgba(34, 197, 94, 0.2);
-      border-color: rgba(34, 197, 94, 0.3);
-      color: #4ade80;
-    }
-    
-    /* Deactivate Account Styles */
-    .deactivate-account-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    .confirm-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 15px;
-      color: var(--text-primary);
-    }
-    
-    .confirm-message i {
-      color: var(--danger-color);
-    }
-    
-    .confirm-action-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 992px) {
-      .sidebar {
-        min-height: auto;
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>暗色系配色表</title>
+    <style>
+      /* 基本樣式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Microsoft JhengHei", "PingFang TC", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
       }
-      
-      .main-content {
-        padding: 20px;
+
+      body {
+        background-color: #1e2228; /* Neutral-950 */
+        color: #eceff2; /* Neutral-100 */
+        padding: 2rem;
+        line-height: 1.6;
       }
-      
-      .info-box {
-        margin-bottom: 20px;
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
       }
-    }
-    
-    @media (max-width: 768px) {
-      .employee-role-row {
-        flex-direction: column;
-        align-items: flex-start;
+
+      h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #3bc6bf; /* Primary-400 */
+        font-size: 2rem;
       }
-      
-      .role-label {
+
+      h2 {
+        color: #3bc6bf; /* Primary-400 */
+        margin: 1.5rem 0 1rem;
+        font-size: 1.5rem;
+        border-bottom: 1px solid #445060; /* Neutral-700 */
+        padding-bottom: 0.5rem;
+      }
+
+      /* 表格樣式 */
+      table {
         width: 100%;
-        margin-bottom: 8px;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        background-color: #343b46; /* Neutral-900 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
-      
-      .role-input, .role-actions {
-        width: 100%;
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border: 1px solid #445060; /* Neutral-700 */
       }
-      
-      .page-title {
-        font-size: 24px;
+
+      th {
+        background-color: #3b4551; /* Neutral-800 */
+        font-weight: bold;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container-fluid p-0">
-    <div class="row g-0">
-      <!-- Sidebar -->
-      <div class="col-md-2 sidebar">
-        <div class="sidebar-header">
-          <a href="#" class="sidebar-brand">
-            <img src="/api/placeholder/28/28" alt="Logo" class="me-2" style="filter: drop-shadow(0 0 5px rgba(92, 224, 216, 0.5));">
-            E-Runcard
-          </a>
-        </div>
-        <div class="mt-4">
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="fas fa-list"></i> Runcards List
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="fas fa-building"></i> WorkStation
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="fas fa-tasks"></i> Process Card
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="fas fa-exclamation-triangle"></i> DMR List
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="#">
-                <i class="fas fa-users"></i> Users
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="fas fa-plus-circle"></i> add Demo
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      
-      <!-- Main Content -->
-      <div class="col-md-10">
-        <!-- Top Navigation -->
-        <div class="d-flex justify-content-between header-nav">
-          <h2 class="m-0 d-none d-md-block" style="color: var(--accent-color); font-weight: 600;">
-            <i class="fas fa-users me-2"></i> User Management
-          </h2>
-          <div class="d-flex align-items-center">
-            <div class="language-switch me-3">
-              <i class="fas fa-globe me-1"></i> EN
-            </div>
-            <div class="user-dropdown">
-              <i class="fas fa-user-circle me-1"></i> 林丹宜 <span class="badge bg-success rounded-pill ms-1">2</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Main Content Area -->
-        <div class="main-content">
-          <h1 class="page-title">User Management Dashboard</h1>
-          
-          <!-- New Employee Button -->
-          <div class="text-center mb-4 fade-in">
-            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#employeeModal" style="background-color: #38bdf8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-              <i class="fas fa-plus-circle me-1"></i> 新增員工
-            </button>
-          </div>
-          
-          <!-- First Row -->
-          <div class="row">
-            <!-- User Identity Section -->
-            <div class="col-lg-4 mb-4 fade-in" style="animation-delay: 0.1s;">
-              <div class="info-box">
-                <h3 class="info-title">
-                  <i class="fas fa-id-badge me-2"></i>
-                  使用者身分 <small>(往下列表)</small>
-                </h3>
-                
-                <div class="user-roles">
-                  <p class="mb-3">登入這個網站的使用者同時有多個身分：</p>
-                  <div class="identity-list">
-                    <div class="identity-item">
-                      <span class="dot dot-1"></span>
-                      <span class="identity-name">系大導童軍主任</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-2"></span>
-                      <span class="identity-name">MOD</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-3"></span>
-                      <span class="identity-name">三結語Member</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-4"></span>
-                      <span class="identity-name">運勢專員</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-5"></span>
-                      <span class="identity-name">資料人員</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-6"></span>
-                      <span class="identity-name">B1 倉儲人員</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-7"></span>
-                      <span class="identity-name">B3 查詢人員</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-8"></span>
-                      <span class="identity-name">品管主管</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-9"></span>
-                      <span class="identity-name">生產專員</span>
-                    </div>
-                    <div class="identity-item">
-                      <span class="dot dot-10"></span>
-                      <span class="identity-name">系統管理員</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Employee Management Section -->
-            <div class="col-lg-4 mb-4 fade-in" style="animation-delay: 0.2s;">
-              <div class="info-box">
-                <h3 class="info-title">
-                  <i class="fas fa-user-cog me-2"></i>
-                  員工管理
-                </h3>
-                
-                <div class="employee-info-container">
-                  <div class="employee-card">
-                    <div class="employee-card-name">
-                      <i class="fas fa-user me-2"></i> 徐健恩
-                    </div>
-                    <div class="employee-card-stations">
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
-                    </div>
-                  </div>
-                  
-                  <div class="employee-card">
-                    <div class="employee-card-name">
-                      <i class="fas fa-user me-2"></i> Dick Chen
-                    </div>
-                    <div class="employee-card-stations">
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
-                    </div>
-                  </div>
-                  
-                  <div class="employee-card">
-                    <div class="employee-card-name">
-                      <i class="fas fa-user me-2"></i> 林美玲
-                    </div>
-                    <div class="employee-card-stations">
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F MDP Line</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F BB Room</span>
-                      <span class="station-badge"><i class="fas fa-map-marker-alt"></i> B3 2F QC Room</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Employee Account Deactivation Section (Replacing the duplicate employee management) -->
-            <div class="col-lg-4 mb-4 fade-in" style="animation-delay: 0.3s;">
-              <div class="info-box">
-                <h3 class="info-title">
-                  <i class="fas fa-user-slash me-2"></i>
-                  員工帳號停用
-                </h3>
-                
-                <div class="deactivate-account-form" id="deactivateAccountForm">
-                  <div class="mb-3">
-                    <label for="disableEmployeeSelect" class="form-label">選擇員工</label>
-                    <select class="form-select" id="disableEmployeeSelect">
-                      <option value="">請選擇員工...</option>
-                      <option value="1">徐健恩</option>
-                      <option value="2">Dick Chen</option>
-                      <option value="3">林美玲</option>
-                      <option value="4">吳明庭</option>
-                      <option value="5">張瑞凱</option>
-                      <option value="6">李宜玲</option>
-                    </select>
-                  </div>
-                  
-                  <div class="mb-3">
-                    <label for="disableReason" class="form-label">停用原因</label>
-                    <textarea class="form-control" id="disableReason" rows="3" placeholder="請輸入停用原因..."></textarea>
-                  </div>
-                  
-                  <div class="mb-3">
-                    <button class="btn btn-danger w-100" id="disableAccountBtn">
-                      <i class="fas fa-user-slash me-1"></i> 停用帳戶
-                    </button>
-                  </div>
-                  
-                  <!-- Confirmation Message (Hidden by default) -->
-                  <div class="confirm-message d-none" id="disableConfirmMessage">
-                    <div class="mb-3">
-                      <i class="fas fa-exclamation-triangle me-2"></i>
-                      <strong>確認停用此帳戶？</strong>
-                    </div>
-                    <p>此操作將會立即生效，將無法登入系統。</p>
-                    
-                    <div class="confirm-action-buttons">
-                      <button class="btn btn-secondary" id="disableCancelBtn">
-                        <i class="fas fa-times me-1"></i> 取消
-                      </button>
-                      <button class="btn btn-danger" id="disableConfirmBtn">
-                        <i class="fas fa-check me-1"></i> 確認停用
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+      tr:hover {
+        background-color: #3b4551; /* Neutral-800 */
+      }
+
+      /* 色票樣式 */
+      .color-swatch {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        margin: 0 auto;
+      }
+
+      .color-code {
+        font-family: monospace;
+        font-size: 0.9rem;
+      }
+
+      .tailwind-class {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: #b1bcc8; /* Neutral-300 */
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: #687b8f; /* Neutral-500 */
+        font-size: 0.9rem;
+      }
+
+      /* 響應式調整 */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        th,
+        td {
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>暗色系設計配色表</h1>
+
+      <!-- 背景與容器 -->
+      <h2>背景與容器</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>頁面背景</td>
+            <td><div class="color-swatch" style="background-color: #1e2228"></div></td>
+            <td>Neutral-950</td>
+            <td class="color-code">#1e2228</td>
+            <td class="tailwind-class">bg-neutral-950</td>
+            <td>網站整體背景</td>
+          </tr>
+          <tr>
+            <td>卡片背景</td>
+            <td><div class="color-swatch" style="background-color: #343b46"></div></td>
+            <td>Neutral-900</td>
+            <td class="color-code">#343b46</td>
+            <td class="tailwind-class">bg-neutral-900</td>
+            <td>卡片、面板背景</td>
+          </tr>
+          <tr>
+            <td>彈窗背景</td>
+            <td><div class="color-swatch" style="background-color: #3b4551"></div></td>
+            <td>Neutral-800</td>
+            <td class="color-code">#3b4551</td>
+            <td class="tailwind-class">bg-neutral-800</td>
+            <td>模態框、對話框</td>
+          </tr>
+          <tr>
+            <td>懸浮元素</td>
+            <td><div class="color-swatch" style="background-color: #454545"></div></td>
+            <td>Surface-800</td>
+            <td class="color-code">#454545</td>
+            <td class="tailwind-class">bg-surface-800</td>
+            <td>懸浮卡片、提示</td>
+          </tr>
+          <tr>
+            <td>分隔線</td>
+            <td><div class="color-swatch" style="background-color: #445060"></div></td>
+            <td>Neutral-700</td>
+            <td class="color-code">#445060</td>
+            <td class="tailwind-class">border-neutral-700</td>
+            <td>區域分隔、邊框</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 文字 -->
+      <h2>文字</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>主要文字</td>
+            <td><div class="color-swatch" style="background-color: #eceff2"></div></td>
+            <td>Neutral-100</td>
+            <td class="color-code">#eceff2</td>
+            <td class="tailwind-class">text-neutral-100</td>
+            <td>標題、主體文字</td>
+          </tr>
+          <tr>
+            <td>次要文字</td>
+            <td><div class="color-swatch" style="background-color: #b1bcc8"></div></td>
+            <td>Neutral-300</td>
+            <td class="color-code">#b1bcc8</td>
+            <td class="tailwind-class">text-neutral-300</td>
+            <td>說明文字、輔助文字</td>
+          </tr>
+          <tr>
+            <td>禁用文字</td>
+            <td><div class="color-swatch" style="background-color: #687b8f"></div></td>
+            <td>Neutral-500</td>
+            <td class="color-code">#687b8f</td>
+            <td class="tailwind-class">text-neutral-500</td>
+            <td>禁用狀態文字</td>
+          </tr>
+          <tr>
+            <td>反向文字</td>
+            <td><div class="color-swatch" style="background-color: #000000"></div></td>
+            <td>Surface-950</td>
+            <td class="color-code">#000000</td>
+            <td class="tailwind-class">text-surface-950</td>
+            <td>按鈕內文字</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 主要元素 -->
+      <h2>主要元素</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>主按鈕</td>
+            <td><div class="color-swatch" style="background-color: #3bc6bf"></div></td>
+            <td>Primary-400</td>
+            <td class="color-code">#3bc6bf</td>
+            <td class="tailwind-class">bg-primary-400</td>
+            <td>主要操作、確認按鈕</td>
+          </tr>
+          <tr>
+            <td>主按鈕懸停</td>
+            <td><div class="color-swatch" style="background-color: #22aaa6"></div></td>
+            <td>Primary-500</td>
+            <td class="color-code">#22aaa6</td>
+            <td class="tailwind-class">hover:bg-primary-500</td>
+            <td>主按鈕懸停狀態</td>
+          </tr>
+          <tr>
+            <td>反向按鈕</td>
+            <td><div class="color-swatch" style="background-color: #445060"></div></td>
+            <td>Neutral-700</td>
+            <td class="color-code">#445060</td>
+            <td class="tailwind-class">bg-neutral-700</td>
+            <td>次要/取消按鈕</td>
+          </tr>
+          <tr>
+            <td>反向按鈕懸停</td>
+            <td><div class="color-swatch" style="background-color: #536376"></div></td>
+            <td>Neutral-600</td>
+            <td class="color-code">#536376</td>
+            <td class="tailwind-class">hover:bg-neutral-600</td>
+            <td>次要按鈕懸停</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 強調元素 -->
+      <h2>強調元素</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>強調按鈕</td>
+            <td><div class="color-swatch" style="background-color: #ffb920"></div></td>
+            <td>Accent-400</td>
+            <td class="color-code">#ffb920</td>
+            <td class="tailwind-class">bg-accent-400</td>
+            <td>促銷、特殊功能按鈕</td>
+          </tr>
+          <tr>
+            <td>強調按鈕懸停</td>
+            <td><div class="color-swatch" style="background-color: #f99607"></div></td>
+            <td>Accent-500</td>
+            <td class="color-code">#f99607</td>
+            <td class="tailwind-class">hover:bg-accent-500</td>
+            <td>強調按鈕懸停</td>
+          </tr>
+          <tr>
+            <td>標籤</td>
+            <td><div class="color-swatch" style="background-color: #8d6a9f"></div></td>
+            <td>Secondary-600</td>
+            <td class="color-code">#8d6a9f</td>
+            <td class="tailwind-class">bg-secondary-600</td>
+            <td>標籤、徽章</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 表單元素 -->
+      <h2>表單元素</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>輸入框背景</td>
+            <td><div class="color-swatch" style="background-color: #3b4551"></div></td>
+            <td>Neutral-800</td>
+            <td class="color-code">#3b4551</td>
+            <td class="tailwind-class">bg-neutral-800</td>
+            <td>輸入框背景</td>
+          </tr>
+          <tr>
+            <td>輸入框邊框</td>
+            <td><div class="color-swatch" style="background-color: #536376"></div></td>
+            <td>Neutral-600</td>
+            <td class="color-code">#536376</td>
+            <td class="tailwind-class">border-neutral-600</td>
+            <td>輸入框默認邊框</td>
+          </tr>
+          <tr>
+            <td>輸入框聚焦</td>
+            <td><div class="color-swatch" style="background-color: #188988"></div></td>
+            <td>Primary-600</td>
+            <td class="color-code">#188988</td>
+            <td class="tailwind-class">focus:border-primary-600</td>
+            <td>輸入框聚焦邊框</td>
+          </tr>
+          <tr>
+            <td>選中狀態</td>
+            <td><div class="color-swatch" style="background-color: #3bc6bf"></div></td>
+            <td>Primary-400</td>
+            <td class="color-code">#3bc6bf</td>
+            <td class="tailwind-class">bg-primary-400</td>
+            <td>開關、複選框選中狀態</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 狀態信息 -->
+      <h2>狀態信息</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>成功提示</td>
+            <td><div class="color-swatch" style="background-color: #aad249"></div></td>
+            <td>Success-400</td>
+            <td class="color-code">#aad249</td>
+            <td class="tailwind-class">bg-success-400</td>
+            <td>成功消息、完成狀態</td>
+          </tr>
+          <tr>
+            <td>成功提示背景</td>
+            <td><div class="color-swatch" style="background-color: #394c1b1a"></div></td>
+            <td>Success-900/10</td>
+            <td class="color-code">#394c1b1a</td>
+            <td class="tailwind-class">bg-success-900/10</td>
+            <td>成功提示背景</td>
+          </tr>
+          <tr>
+            <td>警告提示</td>
+            <td><div class="color-swatch" style="background-color: #ffb920"></div></td>
+            <td>Accent-400</td>
+            <td class="color-code">#ffb920</td>
+            <td class="tailwind-class">bg-accent-400</td>
+            <td>警告消息、注意事項</td>
+          </tr>
+          <tr>
+            <td>警告提示背景</td>
+            <td><div class="color-swatch" style="background-color: #7a300d1a"></div></td>
+            <td>Accent-900/10</td>
+            <td class="color-code">#7a300d1a</td>
+            <td class="tailwind-class">bg-accent-900/10</td>
+            <td>警告提示背景</td>
+          </tr>
+          <tr>
+            <td>錯誤提示</td>
+            <td><div class="color-swatch" style="background-color: #ff7f7f"></div></td>
+            <td>Error-400</td>
+            <td class="color-code">#ff7f7f</td>
+            <td class="tailwind-class">bg-error-400</td>
+            <td>錯誤消息、失敗狀態</td>
+          </tr>
+          <tr>
+            <td>錯誤提示背景</td>
+            <td><div class="color-swatch" style="background-color: #8418181a"></div></td>
+            <td>Error-900/10</td>
+            <td class="color-code">#8418181a</td>
+            <td class="tailwind-class">bg-error-900/10</td>
+            <td>錯誤提示背景</td>
+          </tr>
+          <tr>
+            <td>信息提示</td>
+            <td><div class="color-swatch" style="background-color: #3bc6bf"></div></td>
+            <td>Primary-400</td>
+            <td class="color-code">#3bc6bf</td>
+            <td class="tailwind-class">bg-primary-400</td>
+            <td>一般信息通知</td>
+          </tr>
+          <tr>
+            <td>信息提示背景</td>
+            <td><div class="color-swatch" style="background-color: #1848491a"></div></td>
+            <td>Primary-900/10</td>
+            <td class="color-code">#1848491a</td>
+            <td class="tailwind-class">bg-primary-900/10</td>
+            <td>信息提示背景</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 導航 -->
+      <h2>導航</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>導航背景</td>
+            <td><div class="color-swatch" style="background-color: #343b46"></div></td>
+            <td>Neutral-900</td>
+            <td class="color-code">#343b46</td>
+            <td class="tailwind-class">bg-neutral-900</td>
+            <td>頂部導航欄</td>
+          </tr>
+          <tr>
+            <td>導航活動項</td>
+            <td><div class="color-swatch" style="background-color: #3bc6bf"></div></td>
+            <td>Primary-400</td>
+            <td class="color-code">#3bc6bf</td>
+            <td class="tailwind-class">text-primary-400</td>
+            <td>當前選中的導航項</td>
+          </tr>
+          <tr>
+            <td>側邊導航</td>
+            <td><div class="color-swatch" style="background-color: #1e2228"></div></td>
+            <td>Neutral-950</td>
+            <td class="color-code">#1e2228</td>
+            <td class="tailwind-class">bg-neutral-950</td>
+            <td>側邊導航欄</td>
+          </tr>
+          <tr>
+            <td>底部導航</td>
+            <td><div class="color-swatch" style="background-color: #343b46"></div></td>
+            <td>Neutral-900</td>
+            <td class="color-code">#343b46</td>
+            <td class="tailwind-class">bg-neutral-900</td>
+            <td>底部導航、頁腳</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 覆蓋層 -->
+      <h2>覆蓋層</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UI元素</th>
+            <th>色票</th>
+            <th>色系</th>
+            <th>色碼</th>
+            <th>Tailwind類別</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>模態遮罩</td>
+            <td><div class="color-swatch" style="background-color: #00000070"></div></td>
+            <td>Surface-950/70</td>
+            <td class="color-code">#00000070</td>
+            <td class="tailwind-class">bg-surface-950/70</td>
+            <td>模態框遮罩</td>
+          </tr>
+          <tr>
+            <td>卡片懸浮</td>
+            <td><div class="color-swatch" style="background-color: #0000001a"></div></td>
+            <td>Surface-950/10</td>
+            <td class="color-code">#0000001a</td>
+            <td class="tailwind-class">shadow-xl</td>
+            <td>卡片陰影</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer>
+        <p>此配色表提供了完整的暗色系設計指南，方便設計和開發團隊使用統一的色彩標準。</p>
+      </footer>
+    </div>
+  </body>
+</html>
